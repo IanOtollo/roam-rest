@@ -25,8 +25,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: brand.name,
     description: brand.tagline,
-    images: ["/images/hall-trusses.jpg"],
+    siteName: brand.name,
+    type: "website",
+    locale: "en_KE",
   },
+  twitter: { card: "summary_large_image", title: brand.name, description: brand.tagline },
 };
 
 export const viewport: Viewport = {

@@ -6,22 +6,14 @@ import { ArrowLeft, ArrowRight, ImagePlus, Plus, Trash2, X } from "lucide-react"
 import type { Doc } from "../../../convex/_generated/dataModel";
 import { renamePropertyAction, savePropertyAction, uploadUrlAction } from "@/app/admin/actions";
 import { CustomSelect } from "@/components/ui/CustomSelect";
+import { amenityKey, CLOCK_KEY } from "@/lib/amenities";
+import { AmenityPicker } from "./AmenityPicker";
 import { btnPrimary, btnSecondary, btnSmall, Card, Field, inputCls, Notice } from "./ui";
 
 type Stored = Doc<"properties">;
 export type FormState = Omit<Stored, "_id" | "_creationTime" | "published" | "sortOrder" | "updatedAt" | "previousSlugs">;
 type Unit = FormState["units"][number];
 type Room = FormState["walkthrough"][number];
-type AmenityIcon = FormState["amenities"][number]["icon"];
-
-const AMENITIES: { icon: AmenityIcon; label: string; hint: string }[] = [
-  { icon: "wifi", label: "WiFi", hint: "Throughout the property" },
-  { icon: "kitchen", label: "Kitchen", hint: "Fully equipped" },
-  { icon: "pool", label: "Pool", hint: "Private, in the courtyard" },
-  { icon: "parking", label: "Free parking", hint: "On the premises" },
-  { icon: "ensuite", label: "All rooms en-suite", hint: "Every bedroom has its own bathroom" },
-  { icon: "clock", label: "Check-in and check-out times", hint: "Shown automatically from the times above" },
-];
 
 export const blankProperty: FormState = {
   slug: "",
@@ -245,11 +237,10 @@ export function PropertyForm({
       return { src, alt: title0(src) };
     };
 
-    const clock = AMENITIES.find((a) => a.icon === "clock")!;
     const amenities = f.amenities.map((a) =>
-      a.icon === clock.icon
-        ? { icon: a.icon, label: `Check-in ${f.checkIn}`, detail: `Check-out by ${f.checkOut}` }
-        : a,
+      amenityKey(a) === CLOCK_KEY
+        ? { key: CLOCK_KEY, icon: "clock", label: `Check-in ${f.checkIn}`, detail: `Check-out by ${f.checkOut}` }
+        : { ...a, key: amenityKey(a) },
     );
 
     if (!slug) return setMessage({ kind: "error", text: "Please give the property a web address." });
@@ -539,41 +530,7 @@ export function PropertyForm({
       </Card>
 
       <Card title="What's included" hint="Tick what applies. These show on the property page and power the search filters.">
-        <ul className="space-y-3">
-          {AMENITIES.map((a) => {
-            const current = f.amenities.find((x) => x.icon === a.icon);
-            return (
-              <li key={a.icon} className="rounded-2xl border border-border/60 p-4">
-                <label className="flex items-center gap-3 text-sm font-medium">
-                  <input
-                    type="checkbox"
-                    checked={!!current}
-                    onChange={(e) =>
-                      setF((p) => ({
-                        ...p,
-                        amenities: e.target.checked
-                          ? [...p.amenities, { icon: a.icon, label: a.label, detail: a.hint }]
-                          : p.amenities.filter((x) => x.icon !== a.icon),
-                      }))
-                    }
-                    className="h-4 w-4 accent-[hsl(var(--primary))]"
-                  />
-                  {a.label}
-                </label>
-                {current && a.icon !== "clock" && (
-                  <input
-                    aria-label={`${a.label} detail`}
-                    className={`${inputCls} mt-3`}
-                    value={current.detail}
-                    onChange={(e) =>
-                      setF((p) => ({ ...p, amenities: p.amenities.map((x) => (x.icon === a.icon ? { ...x, detail: e.target.value } : x)) }))
-                    }
-                  />
-                )}
-              </li>
-            );
-          })}
-        </ul>
+        <AmenityPicker value={f.amenities} onChange={(amenities) => setF((p) => ({ ...p, amenities }))} />
       </Card>
 
       <Card title="Location">

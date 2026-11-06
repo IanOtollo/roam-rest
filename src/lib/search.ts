@@ -1,5 +1,6 @@
+import { amenityKey, CLOCK_KEY } from "./amenities";
 import { isRangeFree, nightsBetween } from "./availability";
-import type { Amenity, Property, Unit } from "./property";
+import type { Property, Unit } from "./property";
 
 export type SortKey = "recommended" | "price-asc" | "price-desc";
 
@@ -14,7 +15,8 @@ export interface Filters {
   maxPrice: number | null;
   /** Minimum bedrooms, 0 = any. */
   bedrooms: number;
-  amenities: Amenity["icon"][];
+  /** Amenity keys the visitor requires (see `amenityKey`). */
+  amenities: string[];
   sort: SortKey;
 }
 
@@ -28,15 +30,6 @@ export const emptyFilters: Filters = {
   bedrooms: 0,
   amenities: [],
   sort: "recommended",
-};
-
-export const amenityLabels: Record<Amenity["icon"], string> = {
-  wifi: "WiFi",
-  kitchen: "Kitchen",
-  pool: "Pool",
-  parking: "Free parking",
-  ensuite: "En-suite rooms",
-  clock: "Flexible check-in",
 };
 
 /** A property that passed every filter, with the best-fitting unit to show on its card. */
@@ -58,11 +51,29 @@ export function locationOptions(properties: Property[]): string[] {
   return [...out];
 }
 
-/** Amenity filters worth offering: those that exist on at least one property. */
-export function amenityOptions(properties: Property[]): Amenity["icon"][] {
-  const set = new Set<Amenity["icon"]>();
-  for (const p of properties) for (const a of p.amenities) if (a.icon !== "clock") set.add(a.icon);
-  return [...set];
+export interface AmenityOption {
+  key: string;
+  label: string;
+  /** How many properties offer it. */
+  count: number;
+}
+
+/**
+ * Amenity filters worth offering: every amenity that exists on at least one property, most
+ * common first. Built from the data, so a new amenity appears here the moment a property has it.
+ */
+export function amenityOptions(properties: Property[]): AmenityOption[] {
+  const map = new Map<string, AmenityOption>();
+  for (const p of properties) {
+    for (const a of p.amenities) {
+      const key = amenityKey(a);
+      if (key === CLOCK_KEY) continue; // check-in times aren't something to filter by
+      const found = map.get(key);
+      if (found) found.count++;
+      else map.set(key, { key, label: a.label, count: 1 });
+    }
+  }
+  return [...map.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 }
 
 export function priceBounds(properties: Property[]) {
@@ -97,7 +108,7 @@ export function anyFilterActive(f: Filters) {
 function matchProperty(p: Property, f: Filters): Match | null {
   if (f.where && f.where !== p.city && f.where !== `${p.area}, ${p.city}`) return null;
 
-  const have = new Set(p.amenities.map((a) => a.icon));
+  const have = new Set(p.amenities.map(amenityKey));
   if (!f.amenities.every((a) => have.has(a))) return null;
 
   const hasDates = !!(f.start && f.end);

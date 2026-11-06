@@ -57,7 +57,10 @@ export interface Unit {
 }
 
 export interface Amenity {
-  icon: "wifi" | "kitchen" | "pool" | "parking" | "ensuite" | "clock";
+  /** Catalog key (or `custom-…`). Older records have only `icon`; see `amenityKey`. */
+  key?: string;
+  /** Key into the icon registry (src/lib/amenityIcons.tsx). */
+  icon: string;
   label: string;
   detail: string;
 }

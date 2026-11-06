@@ -8,7 +8,6 @@ import { Reveal, SectionHeading } from "@/components/ui/Reveal";
 import type { Property } from "@/lib/property";
 import {
   activeFilterCount,
-  amenityLabels,
   amenityOptions,
   anyFilterActive,
   emptyFilters,
@@ -41,10 +40,17 @@ export function StaysBrowser({ properties }: { properties: Property[] }) {
   const matches = useMemo(() => filterProperties(properties, filters), [properties, filters]);
   const activeCount = activeFilterCount(filters);
 
-  const toggleAmenity = (a: (typeof amenities)[number]) =>
+  const toggleAmenity = (key: string) =>
     patch({
-      amenities: filters.amenities.includes(a) ? filters.amenities.filter((x) => x !== a) : [...filters.amenities, a],
+      amenities: filters.amenities.includes(key) ? filters.amenities.filter((x) => x !== key) : [...filters.amenities, key],
     });
+
+  // Quick chips: the most common amenities, plus any chosen ones so a selection never disappears.
+  const quick = useMemo(() => {
+    const top = amenities.slice(0, 6);
+    const chosen = amenities.filter((a) => filters.amenities.includes(a.key) && !top.some((t) => t.key === a.key));
+    return [...top, ...chosen];
+  }, [amenities, filters.amenities]);
 
   return (
     <div>
@@ -68,20 +74,20 @@ export function StaysBrowser({ properties }: { properties: Property[] }) {
           )}
         </button>
         <div className="flex gap-2 overflow-x-auto pb-2">
-          {amenities.map((a) => {
-            const on = filters.amenities.includes(a);
+          {quick.map((a) => {
+            const on = filters.amenities.includes(a.key);
             return (
               <button
-                key={a}
+                key={a.key}
                 type="button"
                 aria-pressed={on}
-                onClick={() => toggleAmenity(a)}
+                onClick={() => toggleAmenity(a.key)}
                 className={cn(
                   "shrink-0 rounded-full border px-4 py-2 text-sm transition-colors active:scale-[0.98]",
                   on ? "border-primary bg-primary text-primary-foreground" : "border-border hover:bg-muted",
                 )}
               >
-                {amenityLabels[a]}
+                {a.label}
               </button>
             );
           })}

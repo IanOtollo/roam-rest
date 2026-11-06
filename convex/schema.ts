@@ -16,15 +16,13 @@ export const unitValidator = v.object({
   cover: v.string(),
 });
 
+/**
+ * Any amenity: one from the catalog (src/lib/amenities.ts) or a custom one the owner adds.
+ * `key` is its stable identity (used by search filters); older records have only `icon`.
+ */
 export const amenityValidator = v.object({
-  icon: v.union(
-    v.literal("wifi"),
-    v.literal("kitchen"),
-    v.literal("pool"),
-    v.literal("parking"),
-    v.literal("ensuite"),
-    v.literal("clock"),
-  ),
+  key: v.optional(v.string()),
+  icon: v.string(),
   label: v.string(),
   detail: v.string(),
 });

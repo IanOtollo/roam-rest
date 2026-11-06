@@ -12,6 +12,8 @@ export type SelectOption = {
   hint?: string;
   /** Optional thumbnail (used by the photo pickers). */
   image?: string;
+  /** Optional small icon shown before the label (used by the amenity icon picker). */
+  icon?: React.ReactNode;
 };
 
 /**
@@ -109,6 +111,7 @@ export function CustomSelect({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={current.image} alt="" className="h-10 w-8 shrink-0 rounded-md bg-muted object-cover" />
           )}
+          {current?.icon && <span className="shrink-0 text-accent">{current.icon}</span>}
           <span className={cn("truncate", !current && "text-muted-foreground/60")}>{current?.label ?? placeholder}</span>
         </span>
         <ChevronDown className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300", open && "rotate-180")} />
@@ -155,6 +158,7 @@ export function CustomSelect({
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={o.image} alt="" className="h-10 w-8 shrink-0 rounded-md bg-muted object-cover" />
                     )}
+                    {o.icon && <span className="shrink-0 text-accent">{o.icon}</span>}
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm">{o.label}</span>
                       {o.hint && <span className="block truncate text-xs text-muted-foreground">{o.hint}</span>}

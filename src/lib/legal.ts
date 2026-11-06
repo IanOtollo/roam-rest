@@ -115,7 +115,7 @@ export const legalDocs: LegalDoc[] = [
       {
         heading: "Looking after the property",
         paras: [
-          "You must take reasonable care of the property, its furnishings and its artwork, follow our House Rules and Safety Information, respect the neighbours and obey Kenyan law. Several of our homes contain original artwork and handmade furniture that cannot easily be replaced.",
+          "You must take reasonable care of the property, its furnishings and its artwork, follow our House Rules and Safety Information, respect the neighbours and obey Kenyan law. Some of our homes contain original artwork and handmade furniture that cannot easily be replaced.",
           "Please tell the host promptly about any damage, breakage or problem so it can be put right.",
         ],
       },
@@ -418,7 +418,7 @@ export const legalDocs: LegalDoc[] = [
       {
         heading: "What a published review shows",
         paras: [
-          "A review appears with the guest's name as they chose to give it, the month of the stay, the number of nights and which option they booked, such as the cottage or the whole estate.",
+          "A review appears with the guest's name as they chose to give it, the month of the stay, the number of nights and which option they booked, such as part of the home or the whole property.",
         ],
       },
       {
@@ -536,8 +536,8 @@ export const legalDocs: LegalDoc[] = [
     highlights: [
       "Check-in and check-out times are on each stay's page and in your confirmation.",
       "Stay within the guest limit for the option you booked.",
-      "Please treat the artwork and furniture with care and report any damage.",
-      "Children and non-swimmers must always be supervised near the pool.",
+      "Please treat the furniture, fittings and any artwork with care and report any damage.",
+      "Where a property has a pool or fireplace, follow the safety notes for it.",
     ],
     sections: [
       {
@@ -569,7 +569,7 @@ export const legalDocs: LegalDoc[] = [
         paras: ["Free parking is available on the property where the listing says so. Please park only in the areas shown to you."],
       },
       {
-        heading: "Pool and outdoor areas",
+        heading: "Pools and outdoor areas (where the property has them)",
         items: [
           "Pools are used at your own risk. Unless stated otherwise there is no lifeguard on duty.",
           "Children and non-swimmers must be supervised by an adult at all times.",
@@ -578,9 +578,9 @@ export const legalDocs: LegalDoc[] = [
         ],
       },
       {
-        heading: "Our homes, art and furnishings",
+        heading: "Our homes and furnishings",
         paras: [
-          "Several of our homes display original artwork and handcrafted furniture. Please treat everything with care, do not move or hang anything on the artwork, and let us know straight away if something is damaged so we can put it right.",
+          "Some homes have original artwork or handcrafted furniture. Please treat everything with care, do not move or hang anything on the artwork, and let us know straight away if something is damaged so we can put it right.",
         ],
       },
       {
@@ -632,7 +632,7 @@ export const legalDocs: LegalDoc[] = [
     highlights: [
       "In an emergency, call 999 or 112 first, then tell us.",
       "For anything else, message or call the host on " + brand.phone + ".",
-      "Supervise children and non-swimmers around the pool at all times.",
+      "Where there is a pool, supervise children and non-swimmers at all times.",
     ],
     sections: [
       {
@@ -659,7 +659,7 @@ export const legalDocs: LegalDoc[] = [
         ],
       },
       {
-        heading: "Pool safety",
+        heading: "Pool safety (where the property has a pool)",
         items: [
           "Children and non-swimmers must be supervised by an adult at all times.",
           "Unless stated otherwise there is no lifeguard on duty.",
@@ -686,7 +686,7 @@ export const legalDocs: LegalDoc[] = [
       {
         heading: "Children and older guests",
         paras: [
-          "Several of our homes have steps, raised platforms and artwork at head height. Please take care with young children and older guests, and tell us before you arrive if anyone has particular needs.",
+          "Some homes have steps, raised platforms or artwork at head height. Please take care with young children and older guests, and tell us before you arrive if anyone has particular needs.",
         ],
       },
       {
@@ -732,28 +732,28 @@ export const legalDocs: LegalDoc[] = [
       {
         heading: "Why can't I see the exact address?",
         paras: [
-          "To protect the privacy and security of our properties and their neighbours, the exact address is shared only after your booking is confirmed. Until then you can see the area, such as Karen, Langata.",
+          "To protect the privacy and security of our properties and their neighbours, the exact address is shared only after your booking is confirmed. Until then you can see the neighbourhood and town.",
         ],
       },
       {
-        heading: "What can I book at The Karen Estate?",
+        heading: "What can I book?",
         paras: [
-          "You can book the Cottage (2 bedrooms), the Main House (3 bedrooms) or the Whole Estate (5 bedrooms). The whole estate sleeps up to 10 guests. The calendar updates for the option you choose.",
+          "Each property lists the ways it can be booked, for example a whole home or just part of it. Pick the option you want on the property's page and the calendar updates to show what is free for that option.",
         ],
       },
       {
         heading: "What is included?",
         paras: [
-          "At The Karen Estate: WiFi, a kitchen, a pool and free parking. Every bedroom is en suite, and the cottage has its own kitchen.",
+          "Every property page lists its amenities, such as WiFi, kitchen, parking or a pool. What is included differs from home to home, so check the page of the stay you like.",
         ],
       },
       {
         heading: "What are the check-in and check-out times?",
-        paras: ["At The Karen Estate, check-in is from 14:00 and check-out is by 10:00. Each stay's page shows its own times."],
+        paras: ["Each property sets its own times. You will find them on the stay's page and in your booking confirmation."],
       },
       {
         heading: "Is there a minimum stay?",
-        paras: ["At The Karen Estate the minimum is 2 nights. Each stay's page shows its own minimum."],
+        paras: ["Each property sets its own minimum number of nights, shown on its page. The calendar will not let you pick a shorter stay."],
       },
       {
         heading: "Can I change or cancel my booking?",

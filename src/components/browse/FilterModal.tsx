@@ -4,8 +4,7 @@ import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus, X } from "lucide-react";
 import { cn, ease, formatKES } from "@/lib/utils";
-import { amenityLabels, type Filters } from "@/lib/search";
-import type { Amenity } from "@/lib/property";
+import type { AmenityOption, Filters } from "@/lib/search";
 import { RangeCalendar } from "./RangeCalendar";
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
@@ -45,7 +44,7 @@ export function FilterModal({
   resultCount: number;
   bounds: { min: number; max: number };
   bedroomMax: number;
-  amenities: Amenity["icon"][];
+  amenities: AmenityOption[];
   locations: string[];
   guestMax: number;
 }) {
@@ -220,18 +219,20 @@ export function FilterModal({
               <Group title="Amenities">
                 <div className="flex flex-wrap gap-2">
                   {amenities.map((a) => {
-                    const on = filters.amenities.includes(a);
+                    const on = filters.amenities.includes(a.key);
                     return (
                       <button
-                        key={a}
+                        key={a.key}
                         type="button"
                         aria-pressed={on}
                         onClick={() =>
-                          onChange({ amenities: on ? filters.amenities.filter((x) => x !== a) : [...filters.amenities, a] })
+                          onChange({
+                            amenities: on ? filters.amenities.filter((x) => x !== a.key) : [...filters.amenities, a.key],
+                          })
                         }
                         className={pill(on)}
                       >
-                        {amenityLabels[a]}
+                        {a.label}
                       </button>
                     );
                   })}

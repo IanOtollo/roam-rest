@@ -1,0 +1,15 @@
+# dependencies and build output
+node_modules
+.next
+.next-prod
+out
+*.tsbuildinfo
+next-env.d.ts
+
+# secrets: never commit any env file except the example
+.env
+.env.*
+!.env.example
+
+# Convex local development state
+.convex

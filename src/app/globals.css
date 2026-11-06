@@ -1,0 +1,257 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Palette is lifted from the house itself:
+  lime-washed chalk walls, raw timber, and the near-black of the framed art.
+  Ochre is the only accent (the amber throw on the kilim-suite bed).
+*/
+@layer base {
+  :root {
+    --background: 40 33% 96%;
+    --foreground: 30 12% 9%;
+    --primary: 30 12% 9%;
+    --primary-foreground: 40 33% 96%;
+    --accent: 27 62% 42%;
+    --accent-foreground: 40 33% 96%;
+    --muted: 38 22% 90%;
+    --muted-foreground: 30 8% 38%;
+    --border: 36 18% 82%;
+    --card: 40 38% 98%;
+    --night: 30 14% 6%;
+    /* Text on the always-dark walkthrough section, in both themes. */
+    --on-night: 40 33% 96%;
+    /* The sea from the logo, used only by the theme toggle. */
+    --sea: 192 38% 59%;
+    --radius: 0.75rem;
+  }
+
+  /* Dark theme: warm charcoal, not pure black, so the ochre and photos keep their glow. */
+  .dark {
+    --background: 30 10% 7%;
+    --foreground: 40 25% 92%;
+    --primary: 40 25% 92%;
+    --primary-foreground: 30 12% 9%;
+    --accent: 27 68% 56%;
+    --accent-foreground: 30 12% 9%;
+    --muted: 30 8% 14%;
+    --muted-foreground: 35 10% 64%;
+    --border: 30 8% 21%;
+    --card: 30 9% 10%;
+    --night: 30 14% 4%;
+    --sea: 195 34% 26%;
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /*
+    Custom scrollbars, vertical and horizontal, on the page and on every scrolling box
+    (menus, panels, the filters sheet, tab rows).
+
+    Chrome, Edge and Safari: a slim rounded pill that turns ochre on hover. These rules only
+    work while the standard `scrollbar-width` / `scrollbar-color` properties are NOT set, which
+    is why those are applied only to browsers without ::-webkit-scrollbar (Firefox) below.
+  */
+  ::-webkit-scrollbar {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.28);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 9999px;
+    transition: background-color 0.2s;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent));
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:active {
+    background: hsl(var(--accent) / 0.8);
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* Firefox: the closest equivalent it supports (thin, in the same colours). */
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: hsl(var(--primary) / 0.4) transparent;
+    }
+  }
+
+  body {
+    @apply bg-background font-sans leading-relaxed text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-serif leading-tight tracking-tight;
+  }
+
+  ::selection {
+    @apply bg-accent text-accent-foreground;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/*
+  Text on the always-dark walkthrough section. Plain CSS on purpose (not Tailwind colour
+  utilities) so it can never be missing from the build, which would leave dark text on a
+  dark background. Used in both themes.
+*/
+.on-night {
+  color: hsl(var(--on-night));
+}
+.on-night-70 {
+  color: hsl(var(--on-night) / 0.7);
+}
+.on-night-60 {
+  color: hsl(var(--on-night) / 0.6);
+}
+.on-night-40 {
+  color: hsl(var(--on-night) / 0.4);
+}
+.on-night-line {
+  background-color: hsl(var(--on-night) / 0.15);
+}
+
+/*
+  Theme switch: the new theme is revealed as a circle expanding from the toggle
+  (see SunsetToggle). The browser's default cross-fade is switched off so the
+  clip-path animation is the only motion.
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+@keyframes wave-drift {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/*
+  Arrow motion. Down arrows bounce all the time (faster on hover) to invite a scroll or
+  click; every other arrow nudges in the direction it points while its button is hovered.
+  Put `group` on the button and the class below on the arrow icon.
+*/
+@keyframes arrow-bounce-down {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+@keyframes arrow-nudge-right {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+@keyframes arrow-nudge-left {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-4px);
+  }
+}
+@keyframes arrow-nudge-up {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes arrow-nudge-diag {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(3px, -3px);
+  }
+}
+
+@layer utilities {
+  .animate-wave {
+    animation: wave-drift 6s linear infinite;
+  }
+  .arrow-down {
+    animation: arrow-bounce-down 1.4s ease-in-out infinite;
+  }
+  .group:hover .arrow-down {
+    animation-duration: 0.7s;
+  }
+  .group:hover .arrow-right {
+    animation: arrow-nudge-right 0.7s ease-in-out infinite;
+  }
+  .group:hover .arrow-left {
+    animation: arrow-nudge-left 0.7s ease-in-out infinite;
+  }
+  .group:hover .arrow-up {
+    animation: arrow-nudge-up 0.7s ease-in-out infinite;
+  }
+  .group:hover .arrow-diag {
+    animation: arrow-nudge-diag 0.7s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-wave,
+    .arrow-down,
+    .group:hover .arrow-right,
+    .group:hover .arrow-left,
+    .group:hover .arrow-up,
+    .group:hover .arrow-diag {
+      animation: none;
+    }
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .perspective-1200 {
+    perspective: 1200px;
+  }
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+}

@@ -64,12 +64,14 @@ export const AMENITY_CATALOG: CatalogAmenity[] = [
   c("Kitchen & dining", "dishwasher", "Dishwasher", "In the kitchen", "utensils"),
   c("Kitchen & dining", "cookware", "Cookware and utensils", "Pots, pans, plates and glasses", "utensils"),
   c("Kitchen & dining", "dining", "Dining area", "Table for the whole group", "utensils"),
+  c("Kitchen & dining", "outdoor-kitchen", "Outdoor kitchen", "Covered, with a sink and counter", "cooking"),
 
   // Bedrooms & bathrooms
   c("Bedrooms & bathrooms", "ensuite", "All rooms en-suite", "Every bedroom has its own bathroom", "bed"),
   c("Bedrooms & bathrooms", "extra-beds", "Extra beds on request", "Ask the host", "bed"),
   c("Bedrooms & bathrooms", "bathtub", "Bathtub", "In the main bathroom", "bath"),
   c("Bedrooms & bathrooms", "wardrobe", "Wardrobe space", "Hangers and storage", "shirt"),
+  c("Bedrooms & bathrooms", "outdoor-shower", "Outdoor shower", "Open to the sky", "shower"),
 
   // Outdoors & leisure
   c("Outdoors & leisure", "pool", "Pool", "Private, set in the courtyard", "waves"),
@@ -82,6 +84,8 @@ export const AMENITY_CATALOG: CatalogAmenity[] = [
   c("Outdoors & leisure", "gym", "Gym", "Basic equipment", "dumbbell"),
   c("Outdoors & leisure", "fire-pit", "Fire pit", "For evenings outside", "flame"),
   c("Outdoors & leisure", "sun-loungers", "Sun loungers", "By the pool", "sun"),
+  c("Outdoors & leisure", "sauna", "Sauna", "Private, for guests of the stay", "flame"),
+  c("Outdoors & leisure", "plunge-pool", "Plunge pool", "To cool off after the sauna", "waves"),
 
   // Parking & access
   c("Parking & access", "parking", "Free parking", "On the premises", "car"),
@@ -123,6 +127,7 @@ export const AMENITY_CATALOG: CatalogAmenity[] = [
   c("Views & surroundings", "garden-view", "Garden view", "From the main rooms", "trees"),
   c("Views & surroundings", "pool-view", "Pool view", "From the main rooms", "waves"),
   c("Views & surroundings", "quiet", "Quiet neighbourhood", "Peaceful and leafy", "trees"),
+  c("Views & surroundings", "wildlife", "Wildlife nearby", "Often seen right outside", "paw"),
 
   // Entertainment & work
   c("Entertainment & work", "tv", "TV", "With satellite or streaming"),

@@ -1,5 +1,6 @@
 "use client";
 
+import { hasRate } from "@/lib/property";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
@@ -54,9 +55,11 @@ export function UnitPicker() {
                   <p className="mt-1 text-sm text-muted-foreground">
                     {u.bedrooms} bedrooms · {u.bathrooms} baths · {u.maxGuests} guests
                   </p>
-                  <p className="mt-3 text-sm">
-                    {formatKES(u.nightlyRate)} <span className="text-muted-foreground">/ night</span>
-                  </p>
+                  {hasRate(u) && (
+                    <p className="mt-3 text-sm">
+                      {formatKES(u.nightlyRate)} <span className="text-muted-foreground">/ night</span>
+                    </p>
+                  )}
                 </div>
               </motion.button>
             </li>

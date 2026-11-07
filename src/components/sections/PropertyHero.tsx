@@ -5,7 +5,7 @@ import { ArrowDown, Bath, BedDouble, MapPin, Users, Waves } from "lucide-react";
 import { ease } from "@/lib/utils";
 import { useBooking } from "@/components/booking/BookingContext";
 import { ShareButton } from "@/components/ui/ShareButton";
-import { ArchStack } from "./ArchStack";
+import { ArchStack, heroVariant } from "./ArchStack";
 import { HeroShell } from "./HeroShell";
 
 /** Hero of a single property page. Facts are derived from the property's data. */
@@ -85,7 +85,7 @@ export function PropertyHero() {
             </motion.div>
           </div>
         }
-        art={<ArchStack images={property.heroImages} />}
+        art={<ArchStack images={property.heroImages} variant={heroVariant(property.slug)} />}
       />
       <motion.a
         href="#walkthrough"

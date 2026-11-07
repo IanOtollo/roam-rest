@@ -5,6 +5,7 @@ import { ArrowDown, MapPin } from "lucide-react";
 import { ease } from "@/lib/utils";
 import type { Property } from "@/lib/property";
 import { HeroShell } from "./HeroShell";
+import { LocationSwipe } from "./LocationSwipe";
 import { PropertyCarousel } from "./PropertyCarousel";
 
 /** Brand hero for the home page. The artwork is a carousel through every property. */
@@ -19,7 +20,7 @@ export function HomeHero({ properties, cities }: { properties: Property[]; citie
             transition={{ duration: 0.6, ease }}
             className="flex items-center gap-2 text-sm text-muted-foreground"
           >
-            <MapPin className="h-4 w-4" /> Curated stays · {cities.join(", ")}
+            <MapPin className="h-4 w-4 shrink-0" /> Curated stays · <LocationSwipe cities={cities} />
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 24 }}

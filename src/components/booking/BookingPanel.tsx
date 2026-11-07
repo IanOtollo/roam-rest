@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CalendarDays, Minus, Plus, X } from "lucide-react";
 import { cn, ease, formatKES } from "@/lib/utils";
-import { brand } from "@/lib/property";
+import { brand, hasRate } from "@/lib/property";
 import { useBooking } from "./BookingContext";
 import { ShareButton } from "@/components/ui/ShareButton";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppButton";
@@ -19,8 +19,9 @@ export function BookingPanel() {
   const ready = !!(start && end);
   const stay = property.units.length > 1 ? `${u.label} at ${property.title}` : property.title;
 
+  const priced = hasRate(u);
   const message = ready
-    ? `Hello! I'd like to book ${stay} on ${brand.name} from ${fmt(start)} to ${fmt(end)} (${nights} nights) for ${guests} guest${guests > 1 ? "s" : ""}. Total shown: ${formatKES(total)}.`
+    ? `Hello! I'd like to book ${stay} on ${brand.name} from ${fmt(start)} to ${fmt(end)} (${nights} nights) for ${guests} guest${guests > 1 ? "s" : ""}.${priced ? ` Total shown: ${formatKES(total)}.` : " Could you share the rate?"}`
     : `Hello! I'd like to book ${stay} on ${brand.name} for ${guests} guest${guests > 1 ? "s" : ""}. Could you share the available dates?`;
   const href = `https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(message)}`;
 
@@ -30,10 +31,14 @@ export function BookingPanel() {
       className="scroll-mt-24 rounded-2xl border border-border/60 bg-card p-6 shadow-[0_24px_80px_-32px_hsl(var(--foreground)/0.25)] sm:p-8"
     >
       <div className="flex items-baseline justify-between">
-        <p className="font-serif text-3xl tracking-tight">
-          {formatKES(u.nightlyRate)}
-          <span className="ml-1 font-sans text-sm text-muted-foreground">/ night</span>
-        </p>
+        {priced ? (
+          <p className="font-serif text-3xl tracking-tight">
+            {formatKES(u.nightlyRate)}
+            <span className="ml-1 font-sans text-sm text-muted-foreground">/ night</span>
+          </p>
+        ) : (
+          <p className="font-serif text-2xl tracking-tight">Book this stay</p>
+        )}
         <ShareButton label={false} className="p-2.5" />
       </div>
 
@@ -151,7 +156,7 @@ export function BookingPanel() {
           )}
         </div>
         <AnimatePresence>
-          {ready && (
+          {ready && priced && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}

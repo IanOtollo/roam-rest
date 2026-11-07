@@ -162,6 +162,7 @@ export function FilterModal({
                 </div>
               </Group>
 
+              {bounds.max > 0 && (
               <Group title="Price per night">
                 <div className="grid grid-cols-2 gap-4">
                   <label className="block rounded-xl border border-border p-3 focus-within:border-primary">
@@ -199,6 +200,7 @@ export function FilterModal({
                   Nightly rates currently range from {formatKES(bounds.min)} to {formatKES(bounds.max)}.
                 </p>
               </Group>
+              )}
 
               <Group title="Bedrooms">
                 <div className="flex flex-wrap gap-2">

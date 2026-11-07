@@ -227,7 +227,6 @@ export function PropertyForm({
     for (const u of f.units) {
       if (!u.label.trim()) return setMessage({ kind: "error", text: "Every way to stay needs a name." });
       if (u.covers.length === 0) return setMessage({ kind: "error", text: `"${u.label}" must include at least one part of the property.` });
-      if (!(u.nightlyRate > 0)) return setMessage({ kind: "error", text: `Please set a price per night for "${u.label}".` });
     }
 
     const first = f.walkthrough[0].src;
@@ -501,7 +500,7 @@ export function PropertyForm({
                     })}
                   </div>
                 </div>
-                <Field label="Price per night (KES)">
+                <Field label="Price per night (KES)" hint="Optional. Leave empty and no price is shown for this option.">
                   <input type="number" min={0} step={500} className={inputCls} value={u.nightlyRate || ""} onChange={(e) => updateUnit(i, { nightlyRate: num(e.target.value) })} />
                 </Field>
                 <Field label="Most guests">

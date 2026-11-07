@@ -142,7 +142,7 @@ export const properties: Property[] = [
         beds: 5,
         bathrooms: 5.5,
         maxGuests: 10,
-        nightlyRate: 42000, // CONFIRM
+        nightlyRate: 0,
         note: "Main house and cottage together, with the pool all to yourselves.",
         cover: "/images/pool-house.jpg",
       },
@@ -155,7 +155,7 @@ export const properties: Property[] = [
         beds: 3,
         bathrooms: 3.5,
         maxGuests: 6, // CONFIRM
-        nightlyRate: 28000, // CONFIRM
+        nightlyRate: 0,
         note: "Vaulted great hall, fireplace and three en-suite bedrooms.",
         cover: "/images/hall-fireplace.jpg",
       },
@@ -168,7 +168,7 @@ export const properties: Property[] = [
         beds: 2,
         bathrooms: 2,
         maxGuests: 4, // CONFIRM
-        nightlyRate: 18000, // CONFIRM
+        nightlyRate: 0,
         note: "A complete house of its own, with a private kitchen.",
         cover: "/images/cottage-bed-sculpted.jpg",
       },
@@ -213,6 +213,13 @@ export const properties: Property[] = [
 
 export const getProperty = (slug: string) => properties.find((p) => p.slug === slug);
 
-export const startingRate = (p: Property) => Math.min(...p.units.map((u) => u.nightlyRate));
+/** A rate of 0 (left empty in the admin) means no price is published: nothing is shown for it. */
+export const hasRate = (u: Unit) => u.nightlyRate > 0;
+
+/** Lowest priced option of a property, or null when none of its options has a published rate. */
+export const startingRate = (p: Property): number | null => {
+  const rates = p.units.filter(hasRate).map((u) => u.nightlyRate);
+  return rates.length ? Math.min(...rates) : null;
+};
 
 export const getUnit = (p: Property, id: string) => p.units.find((u) => u.id === id) ?? p.units[0];

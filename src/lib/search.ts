@@ -1,6 +1,6 @@
 import { amenityKey, CLOCK_KEY } from "./amenities";
 import { isRangeFree, nightsBetween } from "./availability";
-import type { Property, Unit } from "./property";
+import { hasRate, type Property, type Unit } from "./property";
 
 export type SortKey = "recommended" | "price-asc" | "price-desc";
 
@@ -76,9 +76,15 @@ export function amenityOptions(properties: Property[]): AmenityOption[] {
   return [...map.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 }
 
+/** Cheapest first; options with no published rate always go last. */
+function byRate(a: Unit, b: Unit) {
+  if (!hasRate(a) || !hasRate(b)) return Number(!hasRate(a)) - Number(!hasRate(b));
+  return a.nightlyRate - b.nightlyRate;
+}
+
 export function priceBounds(properties: Property[]) {
-  const rates = properties.flatMap((p) => p.units.map((u) => u.nightlyRate));
-  return { min: Math.min(...rates), max: Math.max(...rates) };
+  const rates = properties.flatMap((p) => p.units.filter(hasRate).map((u) => u.nightlyRate));
+  return rates.length ? { min: Math.min(...rates), max: Math.max(...rates) } : { min: 0, max: 0 };
 }
 
 export function maxBedrooms(properties: Property[]) {
@@ -118,19 +124,22 @@ function matchProperty(p: Property, f: Filters): Match | null {
   const fitting = p.units
     .filter((u) => f.guests === 0 || u.maxGuests >= f.guests)
     .filter((u) => u.bedrooms >= f.bedrooms)
-    .filter((u) => f.minPrice === null || u.nightlyRate >= f.minPrice)
-    .filter((u) => f.maxPrice === null || u.nightlyRate <= f.maxPrice)
+    // Options without a published rate stay in the results unless the guest is filtering by price.
+    .filter((u) => f.minPrice === null || (hasRate(u) && u.nightlyRate >= f.minPrice))
+    .filter((u) => f.maxPrice === null || (hasRate(u) && u.nightlyRate <= f.maxPrice))
     .filter((u) => !hasDates || isRangeFree(p, u.id, f.start!, f.end!))
-    .sort((a, b) => a.nightlyRate - b.nightlyRate);
+    .sort(byRate);
 
   if (fitting.length === 0) return null;
   const unit = fitting[0];
-  return { property: p, unit, nights, total: hasDates ? nights * unit.nightlyRate : null };
+  return { property: p, unit, nights, total: hasDates && hasRate(unit) ? nights * unit.nightlyRate : null };
 }
 
 export function filterProperties(properties: Property[], f: Filters): Match[] {
   const matches = properties.map((p) => matchProperty(p, f)).filter((m): m is Match => m !== null);
-  if (f.sort === "price-asc") matches.sort((a, b) => a.unit.nightlyRate - b.unit.nightlyRate);
-  if (f.sort === "price-desc") matches.sort((a, b) => b.unit.nightlyRate - a.unit.nightlyRate);
+  if (f.sort === "price-asc") matches.sort((a, b) => byRate(a.unit, b.unit));
+  if (f.sort === "price-desc") matches.sort((a, b) =>
+      !hasRate(a.unit) || !hasRate(b.unit) ? byRate(a.unit, b.unit) : b.unit.nightlyRate - a.unit.nightlyRate,
+    );
   return matches;
 }

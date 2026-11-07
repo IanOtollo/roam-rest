@@ -29,15 +29,16 @@ function Plane({ room, index, cam }: { room: WalkthroughRoom; index: number; cam
 
   return (
     <div className="preserve-3d pointer-events-none absolute inset-0 flex items-center justify-center">
-      <motion.figure style={{ z: rel, opacity, x: `${side * 62}%` }} className="w-[min(60vw,20rem,34vh)]">
-        <div className="overflow-hidden rounded-t-full shadow-[0_50px_120px_-30px_hsl(var(--accent)/0.45)]">
+      <motion.figure style={{ z: rel, opacity, x: `${side * 46}%` }} className="w-[min(78vw,44rem)]">
+        <div className="mx-auto w-fit max-w-full overflow-hidden rounded-xl shadow-[0_50px_120px_-30px_hsl(var(--accent)/0.45)]">
           <Image
             src={room.src}
             alt={room.title}
-            width={960}
-            height={1280}
-            sizes="(min-width: 640px) 320px, 60vw"
-            className="aspect-[3/4] w-full object-cover"
+            width={1280}
+            height={960}
+            quality={95}
+            sizes="(min-width: 1024px) 704px, 78vw"
+            className="block h-auto max-h-[62vh] w-auto max-w-full"
           />
         </div>
         <figcaption className="mt-4 text-center">
@@ -128,16 +129,17 @@ function Corridor({ rooms }: { rooms: WalkthroughRoom[] }) {
 /** Simple grid for visitors who prefer reduced motion. */
 function StaticGallery({ rooms }: { rooms: WalkthroughRoom[] }) {
   return (
-    <div className="mx-auto grid max-w-7xl gap-8 px-4 py-24 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+    <div className="mx-auto grid max-w-7xl items-start gap-8 px-4 py-24 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
       {rooms.map((r) => (
         <figure key={r.src}>
           <Image
             src={r.src}
             alt={r.title}
-            width={960}
-            height={1280}
+            width={1280}
+            height={960}
+            quality={95}
             sizes="(min-width: 1024px) 25vw, 50vw"
-            className="aspect-[3/4] w-full rounded-t-full object-cover"
+            className="block h-auto w-full rounded-xl"
           />
           <figcaption className="mt-3 text-center">
             <p className="font-serif text-lg on-night">{r.title}</p>

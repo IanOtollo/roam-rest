@@ -6,7 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Bath, BedDouble, ChevronLeft, ChevronRight, MapPin, Users, Waves } from "lucide-react";
 import { cn, ease, formatKES } from "@/lib/utils";
 import { startingRate, type Property } from "@/lib/property";
-import { ArchStack } from "./ArchStack";
+import { ArchStack, heroVariant } from "./ArchStack";
 
 const AUTOPLAY_MS = 6000;
 /** Leaves room under the artwork for the caption, specification chips and dots. */
@@ -130,7 +130,7 @@ export function PropertyCarousel({ properties }: { properties: Property[] }) {
             aria-live="polite"
           >
             <Link href={`/stays/${current.slug}`} aria-label={`View ${current.title}`} className="block">
-              <ArchStack images={current.heroImages} heightClass={ARCH_HEIGHT} />
+              <ArchStack images={current.heroImages} variant={heroVariant(current.slug)} heightClass={ARCH_HEIGHT} />
             </Link>
 
             <div className="mx-auto mt-4 max-w-lg">
@@ -138,8 +138,8 @@ export function PropertyCarousel({ properties }: { properties: Property[] }) {
                 <div>
                   <p className="font-serif text-2xl tracking-tight">{current.title}</p>
                   <p className="mt-0.5 flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5" /> {current.area}, {current.city} · from{" "}
-                    {formatKES(startingRate(current))} / night
+                    <MapPin className="h-3.5 w-3.5" /> {current.area}, {current.city}
+                    {startingRate(current) !== null && ` · from ${formatKES(startingRate(current)!)} / night`}
                   </p>
                 </div>
                 <Link

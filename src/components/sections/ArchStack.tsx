@@ -14,16 +14,75 @@ import type { Property } from "@/lib/property";
 const DEFAULT_HEIGHT = "[--h:min(34rem,calc(100svh-8rem))]";
 
 /**
+ * Six compositions for the same three photos. Each property gets one of them (see `heroVariant`),
+ * so neighbouring properties in the hero carousel never look alike. Positions are percentages of
+ * the stack, kept inset because perspective scales the nearer layers up.
+ */
+type Layout = { back: string; main: string; front: string };
+const LAYOUTS: Layout[] = [
+  // 0 · Arches: a tall centre arch with a small arch behind and in front.
+  {
+    back: "left-[2%] top-[12%] h-[42%] w-[34%] rounded-t-full",
+    main: "left-[17%] top-[5%] h-[88%] w-[66%] rounded-t-full",
+    front: "bottom-[10%] right-[4%] h-[36%] w-[30%] rounded-t-full",
+  },
+  // 1 · Orbs: an oval with two smaller ovals.
+  {
+    back: "right-[3%] top-[8%] w-[30%] aspect-[4/5] rounded-full",
+    main: "left-[17%] top-[6%] h-[84%] w-[66%] rounded-full",
+    front: "bottom-[8%] left-[3%] w-[32%] aspect-[4/5] rounded-full",
+  },
+  // 2 · Windows: a tall pane to the right, an arch and a small pane to the left.
+  {
+    back: "left-[2%] top-[14%] h-[40%] w-[32%] rounded-t-full",
+    main: "right-[3%] top-[6%] h-[84%] w-[68%] rounded-3xl",
+    front: "bottom-[8%] left-[6%] h-[30%] w-[34%] rounded-2xl",
+  },
+  // 3 · Offset pair: an arch with a hanging arch tucked beside it and a small orb.
+  {
+    back: "left-[6%] top-[10%] h-[26%] w-[28%] rounded-full",
+    main: "right-[4%] top-[4%] h-[72%] w-[64%] rounded-t-full",
+    front: "bottom-[6%] left-[3%] h-[50%] w-[48%] rounded-b-full",
+  },
+  // 4 · Leaf: a leaf-shaped centre with a soft square and an arch.
+  {
+    back: "right-[2%] top-[10%] w-[28%] aspect-[4/5] rounded-2xl",
+    main: "left-[14%] top-[6%] h-[86%] w-[68%] rounded-tl-full rounded-br-full rounded-bl-xl rounded-tr-xl",
+    front: "bottom-[10%] left-[2%] h-[34%] w-[30%] rounded-t-full",
+  },
+  // 5 · Hanging arches: the arches turned upside down.
+  {
+    back: "left-[2%] top-[10%] h-[38%] w-[32%] rounded-b-full",
+    main: "left-[16%] top-[6%] h-[86%] w-[68%] rounded-b-full",
+    front: "bottom-[8%] right-[3%] h-[38%] w-[30%] rounded-b-full",
+  },
+];
+
+/**
+ * Stable composition for a property, derived from its web address. The same property always
+ * gets the same design (home carousel and its own page), and the current six are all different.
+ */
+export function heroVariant(slug: string) {
+  let h = 2166136261 ^ 15;
+  for (const ch of slug) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  return h % LAYOUTS.length;
+}
+
+/**
  * `heightClass` sets the `--h` custom property (the stack's height). Width follows
  * the height so the arches keep their proportions on short screens.
  */
 export function ArchStack({
   images,
+  variant = 0,
   heightClass = DEFAULT_HEIGHT,
 }: {
   images: Property["heroImages"];
+  /** Which composition to use; pass `heroVariant(property.slug)`. */
+  variant?: number;
   heightClass?: string;
 }) {
+  const layout = LAYOUTS[variant % LAYOUTS.length];
   const px = useMotionValue(0);
   const py = useMotionValue(0);
   const sx = useSpring(px, { stiffness: 90, damping: 18 });
@@ -63,7 +122,7 @@ export function ArchStack({
         {/* back layer, deepest */}
         <motion.div
           style={{ x: backX, z: -140 }}
-          className="absolute left-[2%] top-[12%] h-[50%] w-[32%] overflow-hidden rounded-t-full shadow-2xl"
+          className={`absolute overflow-hidden shadow-2xl ${layout.back}`}
         >
           <Image
             src={images.back.src}
@@ -72,18 +131,18 @@ export function ArchStack({
             height={1280}
             priority
             sizes="208px"
-            className="h-full w-full scale-125 object-cover"
+            className="h-full w-full object-cover"
           />
         </motion.div>
 
         {/* main layer */}
         {/* Layers are inset because perspective scales nearer ones up; this keeps every edge inside the stack. */}
-        <div className="preserve-3d absolute inset-x-0 top-[5%] flex h-[88%] justify-center">
-          <motion.div
-            style={{ z: 40 }}
-            className="relative h-full w-[66%] overflow-hidden rounded-t-full shadow-[0_40px_100px_-30px_hsl(var(--foreground)/0.5)]"
-          >
-            <motion.div style={{ x: innerX, y: innerY }} className="absolute -inset-8">
+        <motion.div
+          style={{ z: 40 }}
+          className={`absolute overflow-hidden shadow-[0_40px_100px_-30px_hsl(var(--foreground)/0.5)] ${layout.main}`}
+        >
+          <>
+            <motion.div style={{ x: innerX, y: innerY }} className="absolute -inset-5">
               <Image
                 src={images.main.src}
                 alt={images.main.alt}
@@ -98,13 +157,13 @@ export function ArchStack({
               style={{ backgroundImage: glare }}
               className="pointer-events-none absolute inset-0 mix-blend-soft-light"
             />
-          </motion.div>
-        </div>
+          </>
+        </motion.div>
 
         {/* front layer, closest */}
         <motion.div
           style={{ x: frontX, z: 150 }}
-          className="absolute bottom-[10%] right-[4%] h-[40%] w-[28%] overflow-hidden rounded-t-full shadow-2xl"
+          className={`absolute overflow-hidden shadow-2xl ${layout.front}`}
         >
           <Image
             src={images.front.src}
@@ -113,7 +172,7 @@ export function ArchStack({
             height={1280}
             priority
             sizes="176px"
-            className="h-full w-full scale-125 object-cover"
+            className="h-full w-full object-cover"
           />
         </motion.div>
       </motion.div>

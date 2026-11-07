@@ -132,7 +132,7 @@ export const upsert = mutation({
     const ids = new Set(property.units.map((u) => u.id));
     if (ids.size !== property.units.length) throw new ConvexError("Each option needs a different short id.");
     for (const u of property.units) {
-      if (u.nightlyRate <= 0 || u.maxGuests <= 0) throw new ConvexError(`"${u.label}" needs a price and a guest limit.`);
+      if (u.nightlyRate < 0 || u.maxGuests <= 0) throw new ConvexError(`"${u.label}" needs a guest limit (and a price of zero or more; zero shows "rates on request").`);
     }
     if (property.minNights < 1) throw new ConvexError("The minimum stay must be at least 1 night.");
 

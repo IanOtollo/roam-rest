@@ -1,5 +1,6 @@
 "use client";
 
+import { hasRate } from "@/lib/property";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -57,6 +58,7 @@ export function PropertyCard({
           <p className="text-sm text-muted-foreground">
             Sleeps up to {unit.maxGuests} · {unit.bedrooms} bedrooms · {unit.label.replace(/^The /, "")}
           </p>
+          {hasRate(unit) && (
           <p className="pt-1 text-sm">
             {total !== null ? (
               <>
@@ -74,6 +76,7 @@ export function PropertyCard({
               </>
             )}
           </p>
+          )}
         </div>
       </Link>
     </motion.li>

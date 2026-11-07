@@ -10,7 +10,7 @@ import { ArchStack, heroVariant } from "./ArchStack";
 
 const AUTOPLAY_MS = 6000;
 /** Leaves room under the artwork for the caption, specification chips and dots. */
-const ARCH_HEIGHT = "[--h:clamp(16rem,calc(100svh-16rem),34rem)]";
+const ARCH_HEIGHT = "[--h:clamp(17rem,calc(100svh-16rem),36rem)]";
 
 const slide = {
   enter: (dir: number) => ({ opacity: 0, x: dir * 60, rotateY: dir * -12 }),

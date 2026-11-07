@@ -11,7 +11,7 @@ import type { Property } from "@/lib/property";
  * recede behind the glass.
  */
 /** Default stack height: fills the hero but never exceeds the viewport. */
-const DEFAULT_HEIGHT = "[--h:min(34rem,calc(100svh-8rem))]";
+const DEFAULT_HEIGHT = "[--h:min(36rem,calc(100svh-8rem))]";
 
 /**
  * Six compositions for the same three photos. Each property gets one of them (see `heroVariant`),
@@ -20,41 +20,41 @@ const DEFAULT_HEIGHT = "[--h:min(34rem,calc(100svh-8rem))]";
  */
 type Layout = { back: string; main: string; front: string };
 const LAYOUTS: Layout[] = [
-  // 0 · Arches: a tall centre arch with a small arch behind and in front.
+  // 0 · Arches: tall arch on the left, two arches stacked on the right.
   {
-    back: "left-[2%] top-[12%] h-[42%] w-[34%] rounded-t-full",
-    main: "left-[17%] top-[5%] h-[88%] w-[66%] rounded-t-full",
-    front: "bottom-[10%] right-[4%] h-[36%] w-[30%] rounded-t-full",
+    main: "left-0 top-[3%] h-[94%] w-[64%] rounded-t-full",
+    back: "right-0 top-[3%] h-[45%] w-[32%] rounded-t-full",
+    front: "bottom-[3%] right-0 h-[45%] w-[32%] rounded-t-full",
   },
-  // 1 · Orbs: an oval with two smaller ovals.
+  // 1 · Orbs: a tall oval on the right, two ovals stacked on the left.
   {
-    back: "right-[3%] top-[8%] w-[30%] aspect-[4/5] rounded-full",
-    main: "left-[17%] top-[6%] h-[84%] w-[66%] rounded-full",
-    front: "bottom-[8%] left-[3%] w-[32%] aspect-[4/5] rounded-full",
+    main: "right-0 top-[3%] h-[94%] w-[64%] rounded-full",
+    back: "left-0 top-[3%] h-[45%] w-[32%] rounded-full",
+    front: "bottom-[3%] left-0 h-[45%] w-[32%] rounded-full",
   },
-  // 2 · Windows: a tall pane to the right, an arch and a small pane to the left.
+  // 2 · Windows: a tall pane on the right, an arch and a pane on the left.
   {
-    back: "left-[2%] top-[14%] h-[40%] w-[32%] rounded-t-full",
-    main: "right-[3%] top-[6%] h-[84%] w-[68%] rounded-3xl",
-    front: "bottom-[8%] left-[6%] h-[30%] w-[34%] rounded-2xl",
+    main: "right-0 top-[3%] h-[94%] w-[64%] rounded-3xl",
+    back: "left-0 top-[3%] h-[45%] w-[32%] rounded-t-full",
+    front: "bottom-[3%] left-0 h-[45%] w-[32%] rounded-2xl",
   },
-  // 3 · Offset pair: an arch with a hanging arch tucked beside it and a small orb.
+  // 3 · Offset: an arch on the left, a round-topped and a round-bottomed card on the right.
   {
-    back: "left-[6%] top-[10%] h-[26%] w-[28%] rounded-full",
-    main: "right-[4%] top-[4%] h-[72%] w-[64%] rounded-t-full",
-    front: "bottom-[6%] left-[3%] h-[50%] w-[48%] rounded-b-full",
+    main: "left-0 top-[3%] h-[94%] w-[64%] rounded-t-full",
+    back: "right-0 top-[3%] h-[40%] w-[32%] rounded-full",
+    front: "bottom-[3%] right-0 h-[50%] w-[32%] rounded-b-full",
   },
-  // 4 · Leaf: a leaf-shaped centre with a soft square and an arch.
+  // 4 · Leaf: a leaf-shaped centre on the left, a soft square and an arch on the right.
   {
-    back: "right-[2%] top-[10%] w-[28%] aspect-[4/5] rounded-2xl",
-    main: "left-[14%] top-[6%] h-[86%] w-[68%] rounded-tl-full rounded-br-full rounded-bl-xl rounded-tr-xl",
-    front: "bottom-[10%] left-[2%] h-[34%] w-[30%] rounded-t-full",
+    main: "left-0 top-[3%] h-[94%] w-[64%] rounded-tl-full rounded-br-full rounded-bl-xl rounded-tr-xl",
+    back: "right-0 top-[3%] h-[42%] w-[32%] rounded-2xl",
+    front: "bottom-[3%] right-0 h-[48%] w-[32%] rounded-t-full",
   },
-  // 5 · Hanging arches: the arches turned upside down.
+  // 5 · Hanging arches: arches turned upside down, main on the right.
   {
-    back: "left-[2%] top-[10%] h-[38%] w-[32%] rounded-b-full",
-    main: "left-[16%] top-[6%] h-[86%] w-[68%] rounded-b-full",
-    front: "bottom-[8%] right-[3%] h-[38%] w-[30%] rounded-b-full",
+    main: "right-0 top-[3%] h-[94%] w-[64%] rounded-b-full",
+    back: "left-0 top-[3%] h-[45%] w-[32%] rounded-b-full",
+    front: "bottom-[3%] left-0 h-[45%] w-[32%] rounded-b-full",
   },
 ];
 
@@ -92,8 +92,8 @@ export function ArchStack({
   const rotateX = useTransform(sy, [-0.5, 0.5], [10, -10]);
   const innerX = useTransform(sx, [-0.5, 0.5], [18, -18]);
   const innerY = useTransform(sy, [-0.5, 0.5], [18, -18]);
-  const backX = useTransform(sx, [-0.5, 0.5], [-34, 34]);
-  const frontX = useTransform(sx, [-0.5, 0.5], [40, -40]);
+  const backX = useTransform(sx, [-0.5, 0.5], [-8, 8]);
+  const frontX = useTransform(sx, [-0.5, 0.5], [8, -8]);
   const glareX = useTransform(sx, [-0.5, 0.5], [0, 100]);
   const glareY = useTransform(sy, [-0.5, 0.5], [0, 100]);
   const glare = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, hsl(40 100% 98% / 0.35), transparent 55%)`;
@@ -115,13 +115,13 @@ export function ArchStack({
       transition={{ duration: 1, ease, delay: 0.2 }}
       onPointerMove={onMove}
       onPointerLeave={onLeave}
-      // Full width of its column, capped at 0.9 x height: on a phone it never pushes the page wider.
-      className={`perspective-1000 relative mx-auto h-[var(--h)] w-full max-w-[calc(var(--h)*0.9)] touch-pan-y ${heightClass}`}
+      // Full width of its column, capped at its height: on a phone it never pushes the page wider.
+      className={`perspective-1000 relative mx-auto h-[var(--h)] w-full max-w-[calc(var(--h)*1)] touch-pan-y ${heightClass}`}
     >
       <motion.div style={{ rotateX, rotateY }} className="preserve-3d absolute inset-0">
         {/* back layer, deepest */}
         <motion.div
-          style={{ x: backX, z: -140 }}
+          style={{ x: backX, z: 0 }}
           className={`absolute overflow-hidden shadow-2xl ${layout.back}`}
         >
           <Image
@@ -138,7 +138,7 @@ export function ArchStack({
         {/* main layer */}
         {/* Layers are inset because perspective scales nearer ones up; this keeps every edge inside the stack. */}
         <motion.div
-          style={{ z: 40 }}
+          style={{ z: 0 }}
           className={`absolute overflow-hidden shadow-[0_40px_100px_-30px_hsl(var(--foreground)/0.5)] ${layout.main}`}
         >
           <>
@@ -162,7 +162,7 @@ export function ArchStack({
 
         {/* front layer, closest */}
         <motion.div
-          style={{ x: frontX, z: 150 }}
+          style={{ x: frontX, z: 0 }}
           className={`absolute overflow-hidden shadow-2xl ${layout.front}`}
         >
           <Image

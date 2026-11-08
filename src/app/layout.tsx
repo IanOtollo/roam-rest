@@ -3,6 +3,7 @@ import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { FloatingActions } from "@/components/ui/FloatingActions";
+import { siteUrl } from "@/lib/site";
 import { brand } from "@/lib/property";
 
 const serif = Fraunces({
@@ -19,7 +20,7 @@ const sans = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl()),
   title: { default: `${brand.name} · Curated stays`, template: `%s · ${brand.name}` },
   description: `${brand.tagline} Characterful stays in Nairobi, with more on the way.`,
   openGraph: {

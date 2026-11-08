@@ -20,7 +20,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: property.title,
     description: `${property.tagline} ${property.area}, ${property.city}. Sleeps up to ${property.maxGuests}.`,
-    openGraph: { images: [property.cover] },
   };
 }
 

@@ -18,10 +18,7 @@ export function FloatingActions() {
         pathname.startsWith("/stays") ? "bottom-24 lg:bottom-6" : "bottom-6",
       )}
     >
-      {/* On phones only WhatsApp floats, so nothing covers form controls; browsers scroll to top natively. */}
-      <div className="hidden sm:block">
-        <ScrollToTop />
-      </div>
+      <ScrollToTop />
       <WhatsAppButton />
     </div>
   );

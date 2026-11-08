@@ -44,12 +44,56 @@ export function BookingPanel() {
     return () => window.clearTimeout(id);
   }, [end]);
   const activeField = !start || end ? "in" : "out";
-  const stay = property.units.length > 1 ? `${u.label} at ${property.title}` : property.title;
 
   const priced = hasRate(u);
-  const message = ready
-    ? `Hello! I'd like to book ${stay} on ${brand.name} from ${fmt(start)} to ${fmt(end)} (${nights} nights) for ${guests} guest${guests > 1 ? "s" : ""}.${priced ? ` Total shown: ${formatKES(total)}.` : " Could you share the rate?"}`
-    : `Hello! I'd like to book ${stay} on ${brand.name} for ${guests} guest${guests > 1 ? "s" : ""}. Could you share the available dates?`;
+  // Laid out as short labelled lines (WhatsApp renders *text* as bold) so the host can read it at a glance.
+  const longDate = (key: string | null) =>
+    key
+      ? new Date(`${key}T00:00:00`).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "";
+  const guestText = `${guests} guest${guests > 1 ? "s" : ""}`;
+  const details = [
+    `*Property:* ${property.title}`,
+    property.units.length > 1 ? `*Option:* ${u.label}` : null,
+  ].filter(Boolean) as string[];
+  const message = (
+    ready
+      ? [
+          `Hello ${brand.name},`,
+          "",
+          "I would like to book a stay. Here are my details:",
+          "",
+          ...details,
+          `*Check-in:* ${longDate(start)}`,
+          `*Check-out:* ${longDate(end)}`,
+          `*Nights:* ${nights}`,
+          `*Guests:* ${guestText}`,
+          ...(priced ? ["", `*Total shown on the site:* ${formatKES(total)}`] : []),
+          "",
+          priced
+            ? "Please confirm that these dates are still available and let me know the next steps."
+            : "Please confirm that these dates are available, share the rate, and let me know the next steps.",
+          "",
+          "Thank you.",
+        ]
+      : [
+          `Hello ${brand.name},`,
+          "",
+          "I am interested in a stay and would like to check availability:",
+          "",
+          ...details,
+          `*Guests:* ${guestText}`,
+          "",
+          "Could you please share the available dates and the rates?",
+          "",
+          "Thank you.",
+        ]
+  ).join(String.fromCharCode(10));
   const href = `https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(message)}`;
 
   return (

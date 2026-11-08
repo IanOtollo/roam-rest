@@ -27,7 +27,7 @@ export function Amenities() {
         variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
         initial="hidden"
         animate="show"
-        className="grid gap-4 sm:grid-cols-2"
+        className="grid grid-cols-2 gap-3 sm:gap-4"
       >
         {shown.map((a) => {
           const Icon = getAmenityIcon(a.icon);
@@ -36,7 +36,7 @@ export function Amenities() {
               key={amenityKey(a)}
               variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}
               transition={{ duration: 0.5, ease }}
-              className="flex items-start gap-4 rounded-2xl border border-border/50 bg-card p-6"
+              className="flex flex-col items-start gap-3 rounded-2xl border border-border/50 bg-card p-4 sm:flex-row sm:gap-4 sm:p-6"
             >
               <Icon className="mt-0.5 h-6 w-6 shrink-0 text-accent" strokeWidth={1.5} />
               <div className="min-w-0">

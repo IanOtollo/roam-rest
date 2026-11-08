@@ -37,14 +37,13 @@ function Slideshow({ rooms }: { rooms: WalkthroughRoom[] }) {
 
   const room = rooms[active];
 
-  // Autoplay: advances every few seconds; pauses on hover or via the pause button. Any manual change restarts the timer because `active` is a dependency.
-  const [playing, setPlaying] = useState(!reduce);
-  const [hovered, setHovered] = useState(false);
+  // Autoplay: advances every few seconds; pauses only via the pause button. Any manual change restarts the timer (`active` is a dependency).
+  const [playing, setPlaying] = useState(true);
   useEffect(() => {
-    if (!playing || hovered || count < 2) return;
+    if (!playing || count < 2) return;
     const id = window.setTimeout(() => step(1), AUTOPLAY_MS);
     return () => window.clearTimeout(id);
-  }, [playing, hovered, active, count, step]);
+  }, [playing, active, count, step]);
 
   return (
     <div
@@ -74,8 +73,6 @@ function Slideshow({ rooms }: { rooms: WalkthroughRoom[] }) {
 
       {/* Stage: full container width, wide frame */}
       <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
         className="absolute inset-0 overflow-hidden"
       >
         <AnimatePresence initial={false} custom={dir} mode="popLayout">

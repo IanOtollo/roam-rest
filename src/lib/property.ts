@@ -15,7 +15,7 @@ export const brand = {
   /** Host's WhatsApp number, international format, digits only. */
   whatsapp: "254708443090",
   /** Public contact email. Leave empty to hide it everywhere. */
-  email: "patkui@gmail.com",
+  email: "info@roamandrest.co.ke",
   /** Phone / bookings, as displayed and as a tel: link. */
   phone: "0708443090",
   phoneLink: "+254708443090",

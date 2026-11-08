@@ -53,7 +53,8 @@ function MonthGrid({ year, month }: { year: number; month: number }) {
               aria-label={`${key}${booked ? ", booked" : ""}`}
               aria-pressed={isStart || isEnd}
               className={cn(
-                "relative mx-auto flex h-10 w-10 items-center justify-center rounded-full text-sm transition-colors duration-200",
+                "max-w-10",
+                "relative mx-auto flex aspect-square w-full items-center justify-center rounded-full text-sm transition-colors duration-200",
                 !disabled && "hover:bg-muted",
                 past && "text-muted-foreground/40",
                 booked && "text-muted-foreground/60 line-through decoration-accent/70",
@@ -71,7 +72,7 @@ function MonthGrid({ year, month }: { year: number; month: number }) {
   );
 }
 
-export function Calendar() {
+export function Calendar({ single = false }: { single?: boolean }) {
   const { property } = useBooking();
   const now = new Date();
   const [offset, setOffset] = useState(0);
@@ -99,11 +100,13 @@ export function Calendar() {
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className={cn("grid gap-8", !single && "md:grid-cols-2")}>
         <MonthGrid year={base.getFullYear()} month={base.getMonth()} />
-        <div className="hidden md:block">
-          <MonthGrid year={next.getFullYear()} month={next.getMonth()} />
-        </div>
+        {!single && (
+          <div className="hidden md:block">
+            <MonthGrid year={next.getFullYear()} month={next.getMonth()} />
+          </div>
+        )}
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
         <span className="flex items-center gap-2">

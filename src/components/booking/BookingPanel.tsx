@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CalendarDays, Minus, Plus, X } from "lucide-react";
 import { cn, ease, formatKES } from "@/lib/utils";
 import { brand, hasRate } from "@/lib/property";
 import { useBooking } from "./BookingContext";
+import { Calendar } from "./Calendar";
 import { ShareButton } from "@/components/ui/ShareButton";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppButton";
 
@@ -17,6 +19,31 @@ export function BookingPanel() {
   const { property, unit, unitData: u, setUnit, start, end, guests, setGuests, clear, hint, nights, total } =
     useBooking();
   const ready = !!(start && end);
+
+  // Date picker popover: opens from the Check-in / Check-out boxes, closes on any outside tap,
+  // Escape, or once both dates are chosen. The page behind stays scrollable.
+  const [open, setOpen] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: PointerEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("pointerdown", away);
+    document.addEventListener("keydown", esc);
+    return () => {
+      document.removeEventListener("pointerdown", away);
+      document.removeEventListener("keydown", esc);
+    };
+  }, [open]);
+  // Only when a check-out is newly chosen, so reopening to change dates doesn't snap shut.
+  useEffect(() => {
+    if (!end) return;
+    const id = window.setTimeout(() => setOpen(false), 450);
+    return () => window.clearTimeout(id);
+  }, [end]);
+  const activeField = !start || end ? "in" : "out";
   const stay = property.units.length > 1 ? `${u.label} at ${property.title}` : property.title;
 
   const priced = hasRate(u);
@@ -91,19 +118,77 @@ export function BookingPanel() {
       </AnimatePresence>
 
       {/* Dates */}
-      <a
-        href="#availability"
-        className="mt-6 grid grid-cols-2 overflow-hidden rounded-xl border border-border transition-colors hover:bg-muted/50"
-      >
-        <span className="border-r border-border p-4">
-          <span className="block text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">Check-in</span>
-          <span className="text-sm">{fmt(start)}</span>
-        </span>
-        <span className="p-4">
-          <span className="block text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">Check-out</span>
-          <span className="text-sm">{fmt(end)}</span>
-        </span>
-      </a>
+      <div ref={pickerRef} className="mt-6">
+        <div
+          className={cn(
+            "grid grid-cols-2 overflow-hidden rounded-xl border transition-colors",
+            open ? "border-foreground/60" : "border-border",
+          )}
+        >
+          {(
+            [
+              { id: "in", label: "Check-in", value: start },
+              { id: "out", label: "Check-out", value: end },
+            ] as const
+          ).map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => setOpen((o) => (o && activeField === f.id ? false : true))}
+              aria-haspopup="dialog"
+              aria-expanded={open}
+              className={cn(
+                "p-4 text-left transition-colors hover:bg-muted/50",
+                f.id === "in" && "border-r border-border",
+                open && activeField === f.id && "bg-muted/60",
+              )}
+            >
+              <span className="block text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">
+                {f.label}
+              </span>
+              <span className="text-sm">{fmt(f.value)}</span>
+            </button>
+          ))}
+        </div>
+
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              role="dialog"
+              aria-label="Choose your dates"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2 rounded-2xl border border-border bg-background p-4">
+              {property.availabilityKnown === false && (
+                <p role="status" className="mb-3 text-xs text-accent">
+                  Live availability couldn&apos;t be loaded, so please confirm dates by message.
+                </p>
+              )}
+              <Calendar single />
+              <p role="status" className="mt-3 min-h-5 text-sm text-accent">
+                {hint ?? (nights > 0 ? `${nights} nights selected.` : `${property.minNights}-night minimum`)}
+              </p>
+              <div className="mt-2 flex items-center justify-between text-sm">
+                <button type="button" onClick={clear} className="text-muted-foreground underline-offset-4 hover:underline">
+                  Clear dates
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:opacity-90"
+                >
+                  Close
+                </button>
+              </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Guests */}
       <div className="mt-3 flex items-center justify-between rounded-xl border border-border p-4">
@@ -136,7 +221,7 @@ export function BookingPanel() {
         </div>
       </div>
 
-      {hint && (
+      {hint && !open && (
         <p role="status" className="mt-3 text-sm text-accent">
           {hint}
         </p>
@@ -186,24 +271,30 @@ export function BookingPanel() {
         and total filled in. Without dates it first asks for them, and "Book via WhatsApp" stays
         available for guests who would rather just message the host.
       */}
-      <motion.a
-        href={ready ? href : "#availability"}
-        {...(ready ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        transition={{ duration: 0.2 }}
-        className={cn(
-          "mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-sm font-medium text-primary-foreground hover:opacity-90",
-        )}
-      >
-        {ready ? (
-          <>
-            <WhatsAppIcon className="h-4 w-4" /> Reserve on WhatsApp
-          </>
-        ) : (
-          "Select your dates"
-        )}
-      </motion.a>
+      {ready ? (
+        <motion.a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.2 }}
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-sm font-medium text-primary-foreground hover:opacity-90"
+        >
+          <WhatsAppIcon className="h-4 w-4" /> Reserve on WhatsApp
+        </motion.a>
+      ) : (
+        <motion.button
+          type="button"
+          onClick={() => setOpen(true)}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.2 }}
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-sm font-medium text-primary-foreground hover:opacity-90"
+        >
+          Select your dates
+        </motion.button>
+      )}
       {!ready && (
         <motion.a
           href={href}

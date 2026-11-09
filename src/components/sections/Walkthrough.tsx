@@ -72,9 +72,7 @@ function Slideshow({ rooms }: { rooms: WalkthroughRoom[] }) {
       </div>
 
       {/* Stage: full container width, wide frame */}
-      <div
-        className="absolute inset-0 overflow-hidden"
-      >
+      <div className="absolute inset-x-0 top-0 bottom-16 overflow-hidden">
         <AnimatePresence initial={false} custom={dir} mode="popLayout">
           <motion.figure
             key={room.src}
@@ -97,8 +95,7 @@ function Slideshow({ rooms }: { rooms: WalkthroughRoom[] }) {
               src={room.src}
               alt={room.title}
               fill
-              quality={90}
-              priority
+              quality={80}
               sizes="100vw"
               draggable={false}
               className="pointer-events-none select-none object-contain"
@@ -128,8 +125,25 @@ function Slideshow({ rooms }: { rooms: WalkthroughRoom[] }) {
         </button>
       </div>
 
-      {/* Dots + mobile arrows */}
-      <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center gap-4 px-4 pb-6">
+      {/* Warm the next and previous photos so a slide is already loaded when it is shown */}
+      {count > 1 &&
+        [(active + 1) % count, (active - 1 + count) % count].map((i) => (
+          <Image
+            key={rooms[i].src}
+            src={rooms[i].src}
+            alt=""
+            width={16}
+            height={9}
+            quality={80}
+            sizes="100vw"
+            loading="eager"
+            aria-hidden
+            className="pointer-events-none absolute h-px w-px opacity-0"
+          />
+        ))}
+
+      {/* Dots + mobile arrows, in their own band below the photo so they never overlap the caption */}
+      <div className="absolute inset-x-0 bottom-0 z-10 flex h-16 items-center justify-center gap-4 px-4">
         <button
           type="button"
           onClick={() => step(-1)}
@@ -138,7 +152,7 @@ function Slideshow({ rooms }: { rooms: WalkthroughRoom[] }) {
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <div className="flex flex-wrap items-center justify-center gap-2">
+        <div className={`${count > 12 ? "hidden sm:flex" : "flex"} items-center justify-center gap-1`}>
           {rooms.map((r, i) => (
             <button
               key={r.src}

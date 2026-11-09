@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus, X } from "lucide-react";
 import { cn, ease, formatKES } from "@/lib/utils";
-import type { AmenityOption, Filters } from "@/lib/search";
+import type { AmenityOption, Filters, LocationGroup } from "@/lib/search";
+import { PlacePicker } from "./PlacePicker";
 import { RangeCalendar } from "./RangeCalendar";
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
@@ -33,7 +34,8 @@ export function FilterModal({
   bounds,
   bedroomMax,
   amenities,
-  locations,
+  places,
+  total,
   guestMax,
 }: {
   open: boolean;
@@ -45,7 +47,8 @@ export function FilterModal({
   bounds: { min: number; max: number };
   bedroomMax: number;
   amenities: AmenityOption[];
-  locations: string[];
+  places: LocationGroup[];
+  total: number;
   guestMax: number;
 }) {
   useEffect(() => {
@@ -96,19 +99,7 @@ export function FilterModal({
 
             <div className="overflow-y-auto px-6">
               <Group title="Place">
-                <div className="flex flex-wrap gap-2">
-                  {["", ...locations].map((loc) => (
-                    <button
-                      key={loc || "any"}
-                      type="button"
-                      aria-pressed={filters.where === loc}
-                      onClick={() => onChange({ where: loc })}
-                      className={pill(filters.where === loc)}
-                    >
-                      {loc || "Anywhere"}
-                    </button>
-                  ))}
-                </div>
+                <PlacePicker groups={places} total={total} value={filters.where} onChange={(where) => onChange({ where })} />
               </Group>
 
               <Group title="Dates">

@@ -12,7 +12,7 @@ import {
   anyFilterActive,
   emptyFilters,
   filterProperties,
-  locationOptions,
+  locationGroups,
   maxBedrooms,
   maxGuests,
   priceBounds,
@@ -20,6 +20,7 @@ import {
 } from "@/lib/search";
 import { cn } from "@/lib/utils";
 import { FilterModal } from "./FilterModal";
+import { PlacePicker } from "./PlacePicker";
 import { SortMenu } from "./SortMenu";
 
 /**
@@ -34,7 +35,7 @@ export function StaysBrowser({ properties }: { properties: Property[] }) {
   const patch = (p: Partial<Filters>) => setFilters((f) => ({ ...f, ...p }));
   const clear = () => setFilters(emptyFilters);
 
-  const locations = useMemo(() => locationOptions(properties), [properties]);
+  const places = useMemo(() => locationGroups(properties), [properties]);
   const amenities = useMemo(() => amenityOptions(properties), [properties]);
   const bounds = useMemo(() => priceBounds(properties), [properties]);
   const matches = useMemo(() => filterProperties(properties, filters), [properties, filters]);
@@ -57,6 +58,9 @@ export function StaysBrowser({ properties }: { properties: Property[] }) {
       <Reveal>
         <SectionHeading eyebrow="Stays" title="Find your next place to rest" />
       </Reveal>
+
+      {/* Where: cities with counts; areas appear once a city is chosen */}
+      <PlacePicker groups={places} total={properties.length} value={filters.where} onChange={(where) => patch({ where })} className="mb-4" scroll />
 
       {/* Filters + quick amenity chips */}
       <div className="flex items-center gap-3">
@@ -150,7 +154,8 @@ export function StaysBrowser({ properties }: { properties: Property[] }) {
         bounds={bounds}
         bedroomMax={maxBedrooms(properties)}
         amenities={amenities}
-        locations={locations}
+        places={places}
+        total={properties.length}
         guestMax={maxGuests(properties)}
       />
     </div>

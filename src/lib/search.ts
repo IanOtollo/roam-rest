@@ -51,6 +51,30 @@ export function locationOptions(properties: Property[]): string[] {
   return [...out];
 }
 
+export interface LocationGroup {
+  city: string;
+  /** Properties in this city. */
+  count: number;
+  areas: { area: string; /** The filter value, "Area, City". */ value: string; count: number }[];
+}
+
+/** Cities (busiest first), each with its areas, built from the data so new places appear by themselves. */
+export function locationGroups(properties: Property[]): LocationGroup[] {
+  const cities = new Map<string, LocationGroup>();
+  for (const p of properties) {
+    const g = cities.get(p.city) ?? { city: p.city, count: 0, areas: [] };
+    g.count++;
+    const value = `${p.area}, ${p.city}`;
+    const a = g.areas.find((x) => x.value === value);
+    if (a) a.count++;
+    else g.areas.push({ area: p.area, value, count: 1 });
+    cities.set(p.city, g);
+  }
+  return [...cities.values()]
+    .map((g) => ({ ...g, areas: g.areas.sort((a, b) => b.count - a.count || a.area.localeCompare(b.area)) }))
+    .sort((a, b) => b.count - a.count || a.city.localeCompare(b.city));
+}
+
 export interface AmenityOption {
   key: string;
   label: string;

@@ -2,6 +2,7 @@
 
 import { hasRate } from "@/lib/property";
 import Image from "next/image";
+import { Star } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ease, formatKES } from "@/lib/utils";
@@ -23,6 +24,10 @@ export function PropertyCard({
 }) {
   const { property, unit, nights, total } = match;
 
+  // Golden-star average across this stay's published reviews.
+  const rated = property.reviews.filter((r) => typeof r.rating === "number");
+  const average = rated.length ? rated.reduce((s, r) => s + (r.rating ?? 0), 0) / rated.length : 0;
+
   // Carry the visitor's search into the stay page so the booking panel opens pre-filled.
   const q = new URLSearchParams({ unit: unit.id });
   if (start && end) {
@@ -40,7 +45,17 @@ export function PropertyCard({
       transition={{ duration: 0.5, ease, delay: Math.min(index, 4) * 0.06 }}
     >
       <Link href={`/stays/${property.slug}?${q.toString()}`} className="group block">
-        <div className="overflow-hidden rounded-2xl bg-muted">
+        <div className="relative overflow-hidden rounded-2xl bg-muted">
+          {rated.length > 0 && (
+            <span
+              className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium shadow-sm backdrop-blur-sm"
+              aria-label={`${average.toFixed(1)} out of 5 from ${rated.length} ${rated.length === 1 ? "review" : "reviews"}`}
+            >
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" strokeWidth={1.5} />
+              {average.toFixed(1)}
+              <span className="font-normal text-muted-foreground">({rated.length})</span>
+            </span>
+          )}
           <Image
             src={property.cover}
             alt={property.title}

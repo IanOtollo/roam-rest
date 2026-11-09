@@ -78,6 +78,8 @@ export interface Review {
   stayed: string;
   nights: number;
   unit: string;
+  /** 1 to 5 golden stars. Older reviews may not have one. */
+  rating?: number;
   quote: string;
 }
 

@@ -36,7 +36,7 @@ export const createInvite = mutation({
       stayed: clamp(a.stayed, 40),
       guestName: a.guestName ? clamp(a.guestName, 60) : undefined,
       used: false,
-      expiresAt: Date.now() + 45 * DAY,
+      expiresAt: Date.now() + 7 * DAY,
       createdAt: Date.now(),
     });
   },
@@ -123,8 +123,9 @@ export const inviteInfo = query({
 
 /** A guest submits their review with the one-time token. It waits for approval before it shows. */
 export const submit = mutation({
-  args: { token: v.string(), author: v.string(), quote: v.string() },
-  handler: async (ctx, { token, author, quote }) => {
+  args: { token: v.string(), author: v.string(), quote: v.string(), rating: v.number() },
+  handler: async (ctx, { token, author, quote, rating }) => {
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) throw new ConvexError("Please choose a star rating from 1 to 5.");
     if (token.length < 24 || token.length > 200) throw new ConvexError("This review link isn't valid.");
     const tokenHash = await sha256Hex(token);
     const invite = await ctx.db
@@ -146,6 +147,7 @@ export const submit = mutation({
       stayed: invite.stayed,
       nights: invite.nights,
       quote: text,
+      rating,
       status: "pending",
       createdAt: Date.now(),
     });

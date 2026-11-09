@@ -3,6 +3,7 @@
 import { BadgeCheck } from "lucide-react";
 import { getUnit } from "@/lib/property";
 import { useBooking } from "@/components/booking/BookingContext";
+import { Stars } from "@/components/ui/Stars";
 import { Reveal, SectionHeading } from "@/components/ui/Reveal";
 
 /** Hidden entirely until at least one verified guest has reviewed the stay. */
@@ -16,6 +17,7 @@ export function Reviews() {
       <ul className="grid gap-4 sm:grid-cols-2">
         {property.reviews.map((r) => (
           <li key={r.id} className="rounded-2xl border border-border/50 bg-card p-8">
+            {r.rating ? <Stars value={r.rating} className="mb-4" /> : null}
             <p className="font-serif text-xl leading-snug tracking-tight">&ldquo;{r.quote}&rdquo;</p>
             <p className="mt-6 flex items-center gap-2 text-sm">
               <BadgeCheck className="h-4 w-4 text-accent" /> {r.author}

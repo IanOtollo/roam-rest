@@ -47,7 +47,7 @@ async function toPublic(ctx: QueryCtx, p: Doc<"properties">) {
       .map((b) => ({ unit: b.unit, start: b.start, end: b.end })),
     reviews: reviews
       .sort((a, b) => b.createdAt - a.createdAt)
-      .map((r) => ({ id: r._id, author: r.author, stayed: r.stayed, nights: r.nights, unit: r.unit, quote: r.quote })),
+      .map((r) => ({ id: r._id, author: r.author, stayed: r.stayed, nights: r.nights, unit: r.unit, quote: r.quote, rating: r.rating })),
   };
 }
 

@@ -15,8 +15,11 @@ export async function submitReviewAction(_prev: ReviewState, form: FormData): Pr
   const author = String(form.get("author") ?? "").slice(0, 100);
   const quote = String(form.get("quote") ?? "").slice(0, 1000);
 
+  const rating = Number(form.get("rating"));
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) return { error: "Please choose a star rating from 1 to 5." };
+
   try {
-    await fetchMutation(api.reviews.submit, { token, author, quote });
+    await fetchMutation(api.reviews.submit, { token, author, quote, rating });
     return { done: true };
   } catch (e) {
     if (e instanceof ConvexError && typeof e.data === "string") return { error: e.data };

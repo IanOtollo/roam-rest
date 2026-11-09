@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Star } from "lucide-react";
 import { submitReviewAction, type ReviewState } from "@/app/review/actions";
 import { btnPrimary, Field, inputCls, Notice } from "@/components/admin/ui";
 
@@ -18,6 +18,8 @@ function Submit() {
 export function ReviewForm({ token, defaultName }: { token: string; defaultName: string }) {
   const [state, action] = useFormState<ReviewState, FormData>(submitReviewAction, {});
   const [text, setText] = useState("");
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
 
   if (state.done) {
     return (
@@ -38,6 +40,29 @@ export function ReviewForm({ token, defaultName }: { token: string; defaultName:
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
       <Field label="Your name" hint="Shown next to your review.">
         <input name="author" required minLength={2} maxLength={60} defaultValue={defaultName} className={inputCls} />
+      </Field>
+      <Field label="Your rating" hint="Tap a star, 5 is the best.">
+        <div className="flex gap-1" onMouseLeave={() => setHover(0)}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <button
+              key={n}
+              type="button"
+              aria-label={`${n} ${n === 1 ? "star" : "stars"}`}
+              aria-pressed={rating === n}
+              onClick={() => setRating(n)}
+              onMouseEnter={() => setHover(n)}
+              className="rounded-md p-1 transition-transform active:scale-90"
+            >
+              <Star
+                className={`h-9 w-9 transition-colors ${
+                  n <= (hover || rating) ? "fill-amber-400 text-amber-400" : "fill-transparent text-muted-foreground/40"
+                }`}
+                strokeWidth={1.5}
+              />
+            </button>
+          ))}
+        </div>
+        <input type="hidden" name="rating" value={rating || ""} />
       </Field>
       <Field label="Your review">
         <textarea

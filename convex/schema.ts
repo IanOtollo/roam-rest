@@ -83,6 +83,7 @@ export default defineSchema({
     stayed: v.string(),
     nights: v.number(),
     quote: v.string(),
+    rating: v.optional(v.number()),
     status: v.union(v.literal("pending"), v.literal("published"), v.literal("hidden")),
     createdAt: v.number(),
   })

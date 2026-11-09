@@ -13,6 +13,7 @@ import {
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppButton";
 import { brand } from "@/lib/property";
+import { Stars } from "@/components/ui/Stars";
 import { btnPrimary, btnSecondary, btnSmall, Card, Field, inputCls, Notice } from "./ui";
 
 type PropertyLite = { slug: string; title: string; units: { id: string; label: string }[] };
@@ -24,6 +25,7 @@ type ReviewRow = {
   stayed: string;
   nights: number;
   unit: string;
+  rating?: number;
   status: "pending" | "published" | "hidden";
 };
 type InviteRow = { id: string; propertySlug: string; unit: string; stayed: string; guestName?: string };
@@ -135,7 +137,7 @@ export function ReviewsManager({
 
         {link && (
           <div className="mt-6 space-y-3 rounded-2xl border border-border bg-muted/50 p-4">
-            <p className="text-sm font-medium">Send this link to the guest. It works once and expires in 45 days.</p>
+            <p className="text-sm font-medium">Send this link to the guest. It works once and expires in 7 days.</p>
             <input readOnly value={link} onFocus={(e) => e.currentTarget.select()} className={inputCls} />
             <div className="flex flex-wrap gap-2">
               <button
@@ -236,6 +238,7 @@ function ReviewItem({
   return (
     <li className="rounded-2xl border border-border/60 p-4">
       <p className="font-serif text-lg leading-snug tracking-tight">&ldquo;{r.quote}&rdquo;</p>
+      {r.rating ? <Stars value={r.rating} className="mb-2" /> : null}
       <p className="mt-3 text-sm">{r.author}</p>
       <p className="text-xs text-muted-foreground">
         {title} · {unitLabel} · Stayed {r.stayed} · {r.nights} nights

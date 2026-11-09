@@ -1,6 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { assertAdmin, clamp, isIsoDate } from "./lib";
+import { addConfirmedBooking, assertAdmin } from "./lib";
 
 export const adminList = query({
   args: { secret: v.string(), propertySlug: v.optional(v.string()) },
@@ -34,42 +34,8 @@ export const create = mutation({
   },
   handler: async (ctx, a) => {
     assertAdmin(a.secret);
-    if (!isIsoDate(a.start) || !isIsoDate(a.end) || a.end <= a.start) {
-      throw new ConvexError("Check-out must be after check-in.");
-    }
-    const property = await ctx.db
-      .query("properties")
-      .withIndex("by_slug", (q) => q.eq("slug", a.propertySlug))
-      .unique();
-    if (!property) throw new ConvexError("Property not found.");
-    const unit = property.units.find((u) => u.id === a.unit);
-    if (!unit) throw new ConvexError("That option doesn't exist for this property.");
-
-    const existing = await ctx.db
-      .query("bookings")
-      .withIndex("by_property", (q) => q.eq("propertySlug", a.propertySlug))
-      .collect();
-    for (const b of existing) {
-      if (b.status !== "confirmed") continue;
-      if (!(b.start < a.end && a.start < b.end)) continue; // the nights don't overlap
-      const other = property.units.find((u) => u.id === b.unit);
-      const otherCovers = other?.covers ?? [b.unit];
-      if (otherCovers.some((c) => unit.covers.includes(c))) {
-        throw new ConvexError(`Those dates clash with an existing booking (${b.start} to ${b.end}).`);
-      }
-    }
-
-    await ctx.db.insert("bookings", {
-      propertySlug: a.propertySlug,
-      unit: a.unit,
-      start: a.start,
-      end: a.end,
-      status: "confirmed",
-      guestName: a.guestName ? clamp(a.guestName, 80) : undefined,
-      guestContact: a.guestContact ? clamp(a.guestContact, 80) : undefined,
-      note: a.note ? clamp(a.note, 300) : undefined,
-      createdAt: Date.now(),
-    });
+    const { secret: _secret, ...booking } = a;
+    await addConfirmedBooking(ctx, booking);
   },
 });
 

@@ -103,6 +103,27 @@ export default defineSchema({
     createdAt: v.number(),
   }).index("by_token", ["tokenHash"]),
 
+  /**
+   * A guest tapped "Reserve on WhatsApp" with dates chosen. The host gets an email with two
+   * buttons; "booked" turns this into a confirmed booking (dates crossed out), "declined" just
+   * closes it. Only a hash of the email-button token is stored.
+   */
+  inquiries: defineTable({
+    tokenHash: v.string(),
+    ipHash: v.string(),
+    propertySlug: v.string(),
+    unit: v.string(),
+    start: v.string(),
+    end: v.string(),
+    guests: v.number(),
+    status: v.union(v.literal("pending"), v.literal("booked"), v.literal("declined")),
+    createdAt: v.number(),
+    decidedAt: v.optional(v.number()),
+  })
+    .index("by_token", ["tokenHash"])
+    .index("by_ip", ["ipHash", "createdAt"])
+    .index("by_created", ["createdAt"]),
+
   /** Failed admin-login tracking, keyed by a hash of the visitor's IP (never the IP itself). */
   loginAttempts: defineTable({
     key: v.string(),

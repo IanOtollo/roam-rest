@@ -96,6 +96,18 @@ export function BookingPanel() {
   ).join(String.fromCharCode(10));
   const href = `https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(message)}`;
 
+  // Quietly tell the host (by email) that a stay was just requested. Runs in the background and
+  // can never block or break opening WhatsApp, which is the real booking path.
+  const notifyHost = () => {
+    try {
+      const body = JSON.stringify({ slug: property.slug, unit, start, end, guests });
+      const sent = navigator.sendBeacon?.("/api/inquiry", new Blob([body], { type: "application/json" }));
+      if (!sent) void fetch("/api/inquiry", { method: "POST", body, keepalive: true }).catch(() => {});
+    } catch {
+      /* ignore: booking still works through WhatsApp */
+    }
+  };
+
   return (
     <div
       id="book"
@@ -320,6 +332,7 @@ export function BookingPanel() {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={notifyHost}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           transition={{ duration: 0.2 }}

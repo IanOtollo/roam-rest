@@ -10,6 +10,7 @@
 
 import type * as attempts from "../attempts.js";
 import type * as bookings from "../bookings.js";
+import type * as inquiries from "../inquiries.js";
 import type * as lib from "../lib.js";
 import type * as properties from "../properties.js";
 import type * as reviews from "../reviews.js";
@@ -23,6 +24,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   attempts: typeof attempts;
   bookings: typeof bookings;
+  inquiries: typeof inquiries;
   lib: typeof lib;
   properties: typeof properties;
   reviews: typeof reviews;

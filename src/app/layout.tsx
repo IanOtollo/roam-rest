@@ -5,6 +5,7 @@ import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { FloatingActions } from "@/components/ui/FloatingActions";
 import { siteUrl } from "@/lib/site";
 import { brand } from "@/lib/property";
+import { Analytics } from "@vercel/analytics/next";
 
 const serif = Fraunces({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <FloatingActions />
         </ConvexClientProvider>
+        <Analytics />
       </body>
     </html>
   );

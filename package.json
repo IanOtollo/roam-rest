@@ -13,6 +13,7 @@
     "go:production": "node scripts/go-production.mjs"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "convex": "^1.49.0",
     "framer-motion": "^11.11.17",

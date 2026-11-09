@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Minus, Plus, X } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { cn, ease, formatKES } from "@/lib/utils";
 import type { AmenityOption, Filters, LocationGroup } from "@/lib/search";
 import { PlacePicker } from "./PlacePicker";
@@ -51,9 +51,6 @@ export function FilterModal({
   total: number;
   guestMax: number;
 }) {
-  const [placesOpen, setPlacesOpen] = useState(false);
-  const placeLabel = filters.where === "" ? "Anywhere" : filters.where;
-
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -102,25 +99,7 @@ export function FilterModal({
 
             <div className="overflow-y-auto px-6">
               <Group title="Place">
-                {/* Collapsed by default so the panel stays short however many places there are. */}
-                <button
-                  type="button"
-                  aria-expanded={placesOpen}
-                  onClick={() => setPlacesOpen((o) => !o)}
-                  className="flex w-full items-center justify-between rounded-xl border border-border px-4 py-3 text-left text-sm transition-colors hover:bg-muted"
-                >
-                  <span>{placeLabel}</span>
-                  <ChevronDown className={cn("h-4 w-4 transition-transform", placesOpen && "rotate-180")} />
-                </button>
-                {placesOpen && (
-                  <PlacePicker
-                    className="mt-3"
-                    groups={places}
-                    total={total}
-                    value={filters.where}
-                    onChange={(where) => onChange({ where })}
-                  />
-                )}
+                <PlacePicker groups={places} total={total} value={filters.where} onChange={(where) => onChange({ where })} />
               </Group>
 
               <Group title="Dates">

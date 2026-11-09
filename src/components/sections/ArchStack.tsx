@@ -130,7 +130,8 @@ export function ArchStack({
             width={960}
             height={1280}
             priority
-            sizes="208px"
+            quality={85}
+            sizes="(min-width: 640px) 640px, 480px"
             className="h-full w-full object-cover"
           />
         </motion.div>
@@ -149,7 +150,8 @@ export function ArchStack({
                 width={960}
                 height={1280}
                 priority
-                sizes="(min-width: 640px) 384px, 288px"
+                quality={85}
+                sizes="(min-width: 640px) 900px, 700px"
                 className="h-full w-full object-cover"
               />
             </motion.div>
@@ -171,7 +173,8 @@ export function ArchStack({
             width={960}
             height={1280}
             priority
-            sizes="176px"
+            quality={85}
+            sizes="(min-width: 640px) 560px, 420px"
             className="h-full w-full object-cover"
           />
         </motion.div>

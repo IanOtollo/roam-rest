@@ -48,7 +48,7 @@ export function PropertyCard({
         <div className="relative overflow-hidden rounded-2xl bg-muted">
           {rated.length > 0 && (
             <span
-              className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium shadow-sm backdrop-blur-sm"
+              className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-xs font-medium sm:right-3 sm:top-3 sm:px-2.5 sm:py-1 shadow-sm backdrop-blur-sm"
               aria-label={`${average.toFixed(1)} out of 5 from ${rated.length} ${rated.length === 1 ? "review" : "reviews"}`}
             >
               <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" strokeWidth={1.5} />
@@ -61,16 +61,16 @@ export function PropertyCard({
             alt={property.title}
             width={960}
             height={1280}
-            sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+            sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, 48vw"
             className="aspect-[5/4] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
         </div>
         <div className="mt-3 space-y-0.5">
-          <h3 className="font-medium leading-snug">{property.title}</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className="text-sm font-medium leading-snug sm:text-base">{property.title}</h3>
+          <p className="text-xs text-muted-foreground sm:text-sm">
             {property.area}, {property.city}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground sm:text-sm">
             Sleeps up to {unit.maxGuests} · {unit.bedrooms} bedrooms · {unit.label.replace(/^The /, "")}
           </p>
           {hasRate(unit) && (

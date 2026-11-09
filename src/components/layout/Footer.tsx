@@ -10,6 +10,9 @@ import { Reveal } from "@/components/ui/Reveal";
 
 const linkClass = "text-sm text-foreground/70 transition-colors hover:text-foreground";
 
+/** The footer lists at most this many stays, in two bulleted columns of STAYS_PER_COLUMN each. */
+const STAYS_PER_COLUMN = 10;
+
 function Column({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
@@ -27,6 +30,8 @@ export async function Footer({ padForBar = false }: { padForBar?: boolean }) {
   const properties = await getProperties();
   const guestDocs = legalDocs.filter((d) => d.group === "guest" && d.footer);
   const legal = legalDocs.filter((d) => d.group === "legal" && d.footer);
+  const listed = properties.slice(0, STAYS_PER_COLUMN * 2);
+  const stayColumns = [listed.slice(0, STAYS_PER_COLUMN), listed.slice(STAYS_PER_COLUMN)].filter((c) => c.length > 0);
 
   return (
     <footer className="bg-muted text-foreground border-t border-border">
@@ -91,21 +96,26 @@ export async function Footer({ padForBar = false }: { padForBar?: boolean }) {
             </div>
 
             {/* Link columns */}
-            <nav aria-label="Footer" className="grid gap-10 sm:grid-cols-3">
-              <Column title="Stays">
-                {properties.map((p) => (
-                  <li key={p.slug}>
-                    <Link href={`/stays/${p.slug}`} className={linkClass}>
-                      {p.title}
-                    </Link>
-                  </li>
-                ))}
-                <li>
-                  <Link href="/#stays" className={linkClass}>
-                    All stays
-                  </Link>
-                </li>
-              </Column>
+            <nav aria-label="Footer" className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
+              <div className="sm:col-span-2 lg:col-span-1">
+                <p className="text-xs font-medium uppercase tracking-widest text-foreground/50">Stays</p>
+                <div className="mt-5 grid grid-cols-2 gap-x-6">
+                  {stayColumns.map((col, i) => (
+                    <ul key={i} className="list-disc space-y-3 pl-4 marker:text-foreground/30">
+                      {col.map((p) => (
+                        <li key={p.slug}>
+                          <Link href={`/stays/${p.slug}`} className={linkClass}>
+                            {p.title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ))}
+                </div>
+                <Link href="/#stays" className={cn(linkClass, "mt-5 inline-block font-medium text-foreground underline underline-offset-4")}>
+                  All stays{properties.length > listed.length ? ` (${properties.length})` : ""}
+                </Link>
+              </div>
 
               <Column title="Guest information">
                 {guestDocs.map((d) => (

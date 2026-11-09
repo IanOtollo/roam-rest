@@ -9,7 +9,7 @@ import { startingRate, type Property } from "@/lib/property";
 import { ArchStack, heroVariant } from "./ArchStack";
 
 const AUTOPLAY_MS = 6000;
-/** Leaves room under the artwork for the caption, specification chips and dots. */
+/** Leaves room under the artwork for the caption and specification chips. */
 const ARCH_HEIGHT = "[--h:clamp(17rem,calc(100svh-16rem),36rem)]";
 
 const slide = {
@@ -67,7 +67,7 @@ function Specs({ property }: { property: Property }) {
 
 /**
  * Home hero artwork: one 3D arch stack per property, cycling automatically through the
- * collection. Side arrows (and dots, swipe and arrow keys) let visitors move on their own;
+ * collection. Side arrows (and swipe and arrow keys) let visitors move on their own;
  * autoplay pauses while they hover or focus. With a single property the arrows are shown
  * dimmed, and they become active as soon as another property is added.
  */
@@ -83,7 +83,6 @@ export function PropertyCarousel({ properties }: { properties: Property[] }) {
     (step: number) => setPage(([i]) => [(i + step + count) % count, step > 0 ? 1 : -1]),
     [count],
   );
-  const goTo = (target: number) => setPage(([i]) => [target, target >= i ? 1 : -1]);
 
   // Autoplay. The timer restarts after every change, so a manual click gets a full interval.
   useEffect(() => {
@@ -158,24 +157,6 @@ export function PropertyCarousel({ properties }: { properties: Property[] }) {
         <Arrow side="right" onClick={() => go(1)} disabled={!many} />
       </div>
 
-      {many && (
-        <div className="mx-auto mt-4 flex max-w-lg items-center gap-2" role="tablist" aria-label="Choose a stay">
-          {properties.map((p, i) => (
-            <button
-              key={p.slug}
-              type="button"
-              role="tab"
-              aria-selected={i === index}
-              aria-label={p.title}
-              onClick={() => goTo(i)}
-              className={cn(
-                "h-1.5 rounded-full transition-all duration-500",
-                i === index ? "w-8 bg-primary" : "w-3 bg-border hover:bg-muted-foreground/50",
-              )}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }

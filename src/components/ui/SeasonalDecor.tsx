@@ -33,7 +33,7 @@ function swagPoints(per: number) {
 
 function Swag({ per, children }: { per: number; children: (p: { x: number; y: number; n: number }) => React.ReactNode }) {
   return (
-    <div className={`pointer-events-none fixed inset-x-0 ${NAV} z-[44] h-12`} aria-hidden="true">
+    <div className={`festive-in pointer-events-none fixed inset-x-0 ${NAV} z-[44] h-12`} aria-hidden="true">
       <svg viewBox={`0 0 1000 ${DEPTH / 2 + 2}`} preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-[16px] w-full overflow-visible">
         <path d={swagPath} fill="none" className="stroke-foreground/40" strokeWidth="1.4" vectorEffect="non-scaling-stroke" />
       </svg>
@@ -95,7 +95,7 @@ function Holly() {
   return (
     <svg
       viewBox="0 0 120 70"
-      className={`pointer-events-none fixed left-1 ${NAV} z-[44] hidden h-[62px] w-[105px] sm:block`}
+      className={`festive-in pointer-events-none fixed left-1 ${NAV} z-[44] hidden h-[62px] w-[105px] sm:block`}
       aria-hidden="true"
     >
       {[-1, 1].map((s) => (
@@ -151,7 +151,7 @@ function Cobweb({ side }: { side: "left" | "right" }) {
   return (
     <svg
       viewBox="0 0 120 120"
-      className={`pointer-events-none fixed ${NAV} z-[44] h-[100px] w-[100px] sm:h-[170px] sm:w-[170px] ${side === "left" ? "left-0" : "right-0 -scale-x-100"}`}
+      className={`festive-in pointer-events-none fixed ${NAV} z-[44] h-[100px] w-[100px] sm:h-[170px] sm:w-[170px] ${side === "left" ? "left-0" : "right-0 -scale-x-100"}`}
       aria-hidden="true"
     >
       <g className="stroke-foreground/45" fill="none" strokeWidth="0.9" strokeLinecap="round">
@@ -323,7 +323,7 @@ function Rangoli() {
       );
     });
   return (
-    <svg viewBox="-70 -62 140 110" className="pointer-events-none fixed bottom-2 left-2 z-[44] hidden h-[110px] w-[140px] sm:block" aria-hidden="true">
+    <svg viewBox="-70 -62 140 110" className="festive-in pointer-events-none fixed bottom-2 left-2 z-[44] hidden h-[110px] w-[140px] sm:block" aria-hidden="true">
       <g transform="translate(0 4) scale(1 0.55)">
         {ring(46, 16, "#e0549b", 9, 4.2)}
         {ring(34, 12, "#f5a623", 8, 3.8)}

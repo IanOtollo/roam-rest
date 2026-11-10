@@ -114,7 +114,7 @@ export function PropertyCarousel({ properties }: { properties: Property[] }) {
         touchX.current = null;
         if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
       }}
-      className={cn("perspective-1000", ARCH_HEIGHT)}
+      className={cn("perspective-1000 overflow-x-clip", ARCH_HEIGHT)}
     >
       <div className="relative">
         <AnimatePresence mode="wait" custom={dir} initial={false}>

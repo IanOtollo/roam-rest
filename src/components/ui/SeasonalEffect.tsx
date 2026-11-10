@@ -267,5 +267,5 @@ export function SeasonalEffect() {
   }, [season, on]);
 
   if (!season || !on) return null;
-  return <canvas ref={canvas} aria-hidden="true" className="pointer-events-none fixed inset-0 z-[45] h-full w-full" />;
+  return <canvas ref={canvas} aria-hidden="true" className="festive-in pointer-events-none fixed inset-0 z-[45] h-full w-full" />;
 }

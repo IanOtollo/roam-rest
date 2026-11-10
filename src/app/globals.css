@@ -255,3 +255,43 @@
     perspective: 1000px;
   }
 }
+
+/* ---- Festive decorations (see components/ui/SeasonalDecor.tsx) ---- */
+@keyframes festive-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@keyframes festive-swing {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+@keyframes festive-dangle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(12px); }
+}
+@keyframes festive-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+.festive-twinkle { animation: festive-twinkle 2.4s ease-in-out infinite; }
+.festive-swing { animation: festive-swing 4.5s ease-in-out infinite; transform-origin: top center; }
+.festive-dangle { animation: festive-dangle 5s ease-in-out infinite; }
+.festive-sway { animation: festive-sway 6s ease-in-out infinite; transform-origin: top center; }
+@media (prefers-reduced-motion: reduce) {
+  .festive-twinkle, .festive-swing, .festive-dangle, .festive-sway { animation: none; }
+}
+
+/* Santa's reindeer: legs gallop in two alternating pairs */
+@keyframes deer-leg {
+  0%, 100% { transform: rotate(28deg); }
+  50% { transform: rotate(-28deg); }
+}
+.deer-leg {
+  animation: deer-leg 0.55s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+.deer-leg-b { animation-delay: -0.275s; }
+@media (prefers-reduced-motion: reduce) {
+  .deer-leg { animation: none; }
+}

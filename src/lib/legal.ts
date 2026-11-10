@@ -5,8 +5,8 @@ import { brand } from "./property";
  * /legal hub and linked from the footer.
  *
  * Written to match what this site actually does today (bookings confirmed by message,
- * address withheld until confirmation, verified-guest reviews, no tracking cookies, a
- * remembered light/dark preference) and to Kenyan context (Data Protection Act, 2019).
+ * address withheld until confirmation, verified-guest reviews, optional guest accounts, no
+ * tracking cookies, a remembered light/dark preference) and to Kenyan context (Data Protection Act, 2019).
  *
  * IMPORTANT: this is a thorough starting draft, not legal advice. Have a Kenyan advocate
  * review it, and have the host confirm the CONFIRM items (cancellation terms, deposits,
@@ -47,11 +47,11 @@ export const legalDocs: LegalDoc[] = [
     label: "Terms of Service",
     group: "legal",
     footer: true,
-    updated: "2026-11-06",
+    updated: "2026-11-10",
     summary: `The terms that apply when you use the ${brand.name} website and book a stay through it.`,
     highlights: [
       "A booking is confirmed only when the host confirms it in writing and any payment asked for has been received.",
-      "You do not need an account to book.",
+      "You do not need an account to book. An optional account lets you save stays and follow your bookings.",
       "The exact address is shared only after your booking is confirmed.",
       "Kenyan law applies, and your statutory consumer rights are not affected.",
     ],
@@ -69,6 +69,18 @@ export const legalDocs: LegalDoc[] = [
           "You must be at least 18 and able to enter into a binding agreement.",
           "If you book for a group, you are the lead guest: you are responsible for making sure everyone in your party knows and follows these terms and the House Rules.",
           "You must give us accurate information about yourself and the number of people staying.",
+        ],
+      },
+      {
+        heading: "Optional guest accounts",
+        paras: ["You never need an account to book. If you would like one, these points apply:"],
+        items: [
+          "You can sign up with an email address and password, or with your Google account.",
+          "An account lets you save stays and see your booking requests and their status. It does not change how booking works or what the booking terms are.",
+          "Give us accurate details, keep your password private and do not share your account. You are responsible for what happens under it.",
+          "Please tell us straight away if you think someone else has used your account.",
+          "We may suspend or close an account that is misused, for example to send spam, to scrape the site or to cause harm to other guests or properties.",
+          "You can delete your account yourself at any time from the account page. This removes your account and saved stays; see our Privacy Policy for what is kept.",
         ],
       },
       {
@@ -211,12 +223,13 @@ export const legalDocs: LegalDoc[] = [
     label: "Privacy Policy",
     group: "legal",
     footer: true,
-    updated: "2026-11-06",
+    updated: "2026-11-10",
     summary:
       "What personal data we collect, why we use it, who sees it, how long we keep it and the rights you have under Kenya's Data Protection Act, 2019.",
     highlights: [
       "We never sell your personal data.",
-      "This website does not collect your name or payment details: booking requests reach us by message.",
+      "You never need an account to book. If you create one we keep only your name, email address and the stays you save.",
+      "We never take card or other payment details on this website.",
       "You can ask to see, correct or delete your data at any time.",
       "You can complain to the Office of the Data Protection Commissioner of Kenya.",
     ],
@@ -233,15 +246,17 @@ export const legalDocs: LegalDoc[] = [
         items: [
           "Enquiries and bookings: your name, WhatsApp number or email, the dates and number of guests, and anything else you choose to tell us.",
           "Running your stay: arrival details, identification where the law requires us to record it, and confirmation of payment.",
-          "Reviews: if you are invited to review a completed stay, the review you write and the stay details it relates to.",
-          "Technical information: basic data your browser sends when you visit, such as IP address and device type, which our hosting provider may keep in standard server logs.",
-          "Preferences: your light or dark theme choice, saved in your own browser (see our Cookie Notice).",
+          "Your account (optional): your name, your email address, and either a salted one-way hash of your password (we never see or store the password itself) or, if you sign in with Google, your Google account identifier. We also keep the stays you save and, if you were signed in when you sent a booking request, a link between that request and your account.",
+          "Booking requests: when you tap Reserve on WhatsApp with dates chosen, we record the request (property, option, dates and number of guests) so we can follow up. Without an account this holds no name or contact details.",
+          "Reviews: if you are invited to review a completed stay, the review you write and the stay details it relates to. If you are signed in, we invite you on screen once your stay has ended.",
+          "Technical information: basic data your browser sends when you visit, such as IP address and device type, which our hosting provider may keep in standard server logs. To limit abuse we also keep a one-way coded form of your IP address, from which the address itself cannot be recovered, for a short time.",
+          "Preferences and sign-in: your light or dark theme choice, saved in your own browser, and, if you sign in, a secure sign-in cookie (see our Cookie Notice).",
         ],
       },
       {
         heading: "What this website does not collect",
         paras: [
-          "This website does not itself take your name, contact details or payment details. When you choose Reserve, a message is prepared for you to send us on WhatsApp and nothing is sent until you send it. The Share button creates a link containing the dates and option you chose but no personal information. We do not run advertising or tracking analytics.",
+          "This website does not take your payment details, and it does not ask for your name or contact details unless you create an account. When you choose Reserve, a message is prepared for you to send us on WhatsApp and nothing goes to WhatsApp until you send it. At the same moment the website records the request and emails us a notice of the property, dates and guests so we can follow up; if you are signed in, the notice also shows your account name and email. The Share button creates a link containing the dates and option you chose but no personal information. We do not run advertising or tracking analytics.",
         ],
       },
       {
@@ -250,7 +265,9 @@ export const legalDocs: LegalDoc[] = [
           "To reply to your enquiry and to confirm, manage and host your booking.",
           "To meet legal, tax, accounting and guest-record obligations.",
           "To keep our properties, guests and neighbours safe, and to protect the website from misuse.",
-          "To invite you to leave a review after a completed stay.",
+          "To run your optional account: signing you in, keeping your saved stays and showing you your booking requests.",
+          "To invite you to leave a review after a completed stay, including an on-screen invitation if you are signed in.",
+          "To prevent spam and misuse, for example by limiting how many requests or sign-in attempts come from one place.",
           "To send you news or offers only if you have asked us to, and you can stop at any time.",
         ],
       },
@@ -265,7 +282,9 @@ export const legalDocs: LegalDoc[] = [
         paras: ["We share personal data only where it is needed to provide the service, and never to sell it:"],
         items: [
           "Messaging providers such as WhatsApp, when you contact us or we reply to you.",
-          "Hosting and technology providers that keep this website running.",
+          "Hosting and technology providers that keep this website running and store its data.",
+          "Our email provider, which delivers the booking notices we send ourselves.",
+          "Google, if you choose to sign in with Google. Google tells us your name, email address and account identifier, and nothing else about your account.",
           "Payment providers, if and when online payment is offered.",
           "People who help us run a stay, such as housekeeping or caretaking staff, who see only what they need.",
           "Professional advisers and authorities, where we are legally required to or need to protect our legal rights.",
@@ -288,6 +307,8 @@ export const legalDocs: LegalDoc[] = [
         items: [
           "Enquiries that do not become bookings: kept only for as long as needed to answer you, then deleted.",
           "Bookings and guest records: kept for as long as needed to run the stay and to meet legal, tax and accounting requirements.",
+          "Booking requests: kept for as long as needed to run the stay and keep our records.",
+          "Accounts: kept until you delete your account. Deleting it removes your account and your saved stays. Past booking requests stay in our records but are no longer linked to you.",
           "Reviews: kept for as long as the review is published, unless you ask us to remove it.",
           "After that, we delete or anonymise the data.",
         ],
@@ -306,7 +327,7 @@ export const legalDocs: LegalDoc[] = [
       {
         heading: "How to use your rights",
         paras: [
-          "Contact us using the details below and tell us what you would like. We may need to confirm who you are first, and we will respond within the time the law allows. There is no charge for ordinary requests.",
+          "If you have an account you can delete it yourself from the account page. For anything else, contact us using the details below and tell us what you would like. We may need to confirm who you are first, and we will respond within the time the law allows. There is no charge for ordinary requests.",
         ],
       },
       {
@@ -342,12 +363,13 @@ export const legalDocs: LegalDoc[] = [
     label: "Cookie Notice",
     group: "legal",
     footer: true,
-    updated: "2026-11-06",
+    updated: "2026-11-10",
     summary: "How this website uses cookies and similar technologies.",
     highlights: [
       "No advertising, analytics or tracking cookies are used.",
-      "The site remembers only your light or dark theme choice, in your own browser.",
-      "You can clear it at any time in your browser settings.",
+      "The only cookie we set is a sign-in cookie, and only if you choose to sign in to an optional account.",
+      "Your light or dark theme choice stays in your own browser.",
+      "You can clear all of it at any time in your browser settings.",
     ],
     sections: [
       {
@@ -360,20 +382,21 @@ export const legalDocs: LegalDoc[] = [
         heading: "What we use today",
         items: [
           "Advertising, analytics and tracking cookies: none. The site works without them.",
-          "Strictly necessary: none are required to browse the site or request a stay.",
+          "Strictly necessary: none are needed to browse the site or request a stay. If you choose to sign in to an optional account, a secure sign-in cookie keeps you signed in for up to 30 days. It holds only an anonymous identifier, cannot be read by scripts on the page, and is removed when you sign out. If you use Google sign-in, a short-lived security cookie (about 10 minutes) protects the sign-in and is deleted straight after.",
           "Preference: your choice of light or dark theme is saved in your browser's local storage so the site looks the same next time you visit. It stays on your device and is never sent to us.",
+          "Session: if you choose \"Maybe later\" on a review invitation, that choice is kept in your browser's session storage until you close the tab.",
         ],
       },
       {
         heading: "Third-party services",
         paras: [
-          "When you choose to message us on WhatsApp, or open our Instagram or TikTok pages, you leave this website and the other service's own terms, privacy practices and cookies apply. We do not control them.",
+          "When you choose to message us on WhatsApp, open our Instagram or TikTok pages, or sign in with Google, you use that service and its own terms, privacy practices and cookies apply. We do not control them.",
         ],
       },
       {
         heading: "Managing cookies and stored data",
         paras: [
-          "You can block or delete cookies and site data in your browser settings at any time. Clearing the data simply resets the site to your device's default light or dark setting, and will not stop you using the site.",
+          "You can block or delete cookies and site data in your browser settings at any time. Clearing the data resets the site to your device's default light or dark setting and signs you out of your account, and will not stop you using the site. Blocking the sign-in cookie only means you cannot sign in; booking works the same.",
         ],
       },
       {
@@ -393,11 +416,12 @@ export const legalDocs: LegalDoc[] = [
     label: "Reviews Policy",
     group: "guest",
     footer: false,
-    updated: "2026-11-06",
+    updated: "2026-11-10",
     summary: "How guest reviews work, and why every review on this site comes from someone who actually stayed.",
     highlights: [
       "Only guests who have completed a stay can review it.",
       "Each review is tied to a real booking and shows the stay it relates to.",
+      "If you booked while signed in, we invite you to review as soon as your stay has ended.",
       "We never pay for reviews or edit what guests write.",
     ],
     sections: [
@@ -412,13 +436,14 @@ export const legalDocs: LegalDoc[] = [
         items: [
           "Guests with a completed booking, after they have checked out.",
           "Each guest is sent a personal link by the host after checkout. The link is tied to their booking and can be used once.",
+          "If you made your booking request while signed in and the host confirmed it, we invite you on screen the next time you visit after checkout. You can review straight away or choose \"Maybe later\". That invitation is also tied to your booking and can be used once.",
           "There is no open review form on the website, which keeps out reviews from people who have not stayed.",
         ],
       },
       {
         heading: "What a published review shows",
         paras: [
-          "A review appears with the guest's name as they chose to give it, the month of the stay, the number of nights and which option they booked, such as part of the home or the whole property.",
+          "A review appears with the guest's name as they chose to give it, the month of the stay, the number of nights and which option they booked, such as part of the home or the whole property. Giving a name is optional: if you leave it blank, the review appears as \"Guest\".",
         ],
       },
       {
@@ -705,10 +730,10 @@ export const legalDocs: LegalDoc[] = [
     label: "FAQ",
     group: "guest",
     footer: true,
-    updated: "2026-11-06",
+    updated: "2026-11-10",
     summary: "Quick answers about booking, what's included and what to expect.",
     highlights: [
-      "No account is needed to book.",
+      "No account is needed to book. An optional account lets you save stays and follow your bookings.",
       "You are not charged when you send a request; the host confirms by message.",
       "The exact address is shared after your booking is confirmed.",
     ],
@@ -716,6 +741,12 @@ export const legalDocs: LegalDoc[] = [
       {
         heading: "Do I need an account to book?",
         paras: ["No. You can choose your dates and send a request without signing up."],
+      },
+      {
+        heading: "What does an account give me?",
+        paras: [
+          "An account is optional. With one you can save stays with the heart, see your booking requests and their status, and be invited to review a stay as soon as it ends. You can sign up with an email and password or with Google, and delete your account yourself at any time from the account page.",
+        ],
       },
       {
         heading: "How do I book?",
@@ -764,7 +795,7 @@ export const legalDocs: LegalDoc[] = [
       {
         heading: "How do reviews work?",
         paras: [
-          "Only guests who have completed a stay can review it, and each review is tied to a real booking. See our Reviews Policy.",
+          "Only guests who have completed a stay can review it, and each review is tied to a real booking. If you booked while signed in, you are invited to review on screen once your stay has ended. See our Reviews Policy.",
         ],
       },
       {

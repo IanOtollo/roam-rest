@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ease, formatKES } from "@/lib/utils";
 import type { Match } from "@/lib/search";
 import { RatingTag } from "@/components/ui/RatingTag";
+import { SaveButton } from "@/components/account/SaveButton";
 
 /** Compact Airbnb-style listing card. Photo, place, a one-line summary and the price. */
 export function PropertyCard({
@@ -39,6 +40,7 @@ export function PropertyCard({
   return (
     <motion.li
       layout
+      className="relative"
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97 }}
@@ -85,6 +87,7 @@ export function PropertyCard({
           )}
         </div>
       </Link>
+      <SaveButton slug={property.slug} title={property.title} className="absolute left-2 top-2 z-20 sm:left-3 sm:top-3" />
     </motion.li>
   );
 }

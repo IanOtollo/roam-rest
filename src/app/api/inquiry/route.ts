@@ -4,6 +4,7 @@ import { api } from "../../../../convex/_generated/api";
 import { adminMutation, clientKey, convexReady } from "@/lib/admin/server";
 import { inquiryEmail, notifyAddress, sendEmail } from "@/lib/email";
 import { brand } from "@/lib/property";
+import { currentGuest } from "@/lib/guest/server";
 import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +30,8 @@ export async function POST(req: Request) {
     const guests = Number(b.guests);
     if (!slug || !unit || !start || !end || !Number.isFinite(guests)) return none();
 
+    // Optional: if the guest is signed in, the inquiry also shows under their "My trips".
+    const account = await currentGuest();
     const token = randomBytes(32).toString("base64url");
     const r = await adminMutation(api.inquiries.create, {
       token,
@@ -38,6 +41,7 @@ export async function POST(req: Request) {
       start,
       end,
       guests,
+      ...(account ? { guestId: account.id } : {}),
     });
     if (!r.ok) return none();
 
@@ -53,6 +57,7 @@ export async function POST(req: Request) {
       nights: r.nights,
       guests: Math.round(guests),
       total: r.nightlyRate > 0 ? r.nightlyRate * r.nights : null,
+      ...(account ? { guest: { name: account.name, email: account.email } } : {}),
       bookedUrl: `${base}?answer=booked`,
       declinedUrl: `${base}?answer=declined`,
     });

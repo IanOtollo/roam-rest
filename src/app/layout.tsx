@@ -2,7 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+import { AccountProvider } from "@/components/account/AccountProvider";
 import { FloatingActions } from "@/components/ui/FloatingActions";
+import { SeasonalDecor } from "@/components/ui/SeasonalDecor";
+import { SeasonalEffect } from "@/components/ui/SeasonalEffect";
 import { siteUrl } from "@/lib/site";
 import { brand } from "@/lib/property";
 
@@ -51,8 +54,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ConvexClientProvider>
-          {children}
-          <FloatingActions />
+          <AccountProvider>
+            {children}
+            <FloatingActions />
+            <SeasonalDecor />
+            <SeasonalEffect />
+          </AccountProvider>
         </ConvexClientProvider>
       </body>
     </html>

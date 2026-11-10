@@ -119,10 +119,33 @@ export default defineSchema({
     status: v.union(v.literal("pending"), v.literal("booked"), v.literal("declined")),
     createdAt: v.number(),
     decidedAt: v.optional(v.number()),
+    /** Set when a signed-in guest made the inquiry, so it shows under "My bookings". */
+    guestId: v.optional(v.id("guests")),
+    /** The review link created for this stay, once the guest chose to leave a review. */
+    reviewInviteId: v.optional(v.id("reviewInvites")),
   })
+    .index("by_guest", ["guestId", "createdAt"])
     .index("by_token", ["tokenHash"])
     .index("by_ip", ["ipHash", "createdAt"])
     .index("by_created", ["createdAt"]),
+
+  /** Optional guest accounts. Booking never needs one. Only a salted hash of the password is kept. */
+  guests: defineTable({
+    email: v.string(),
+    name: v.string(),
+    passwordHash: v.optional(v.string()),
+    googleId: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_email", ["email"])
+    .index("by_google", ["googleId"]),
+
+  /** A guest's saved (hearted) stays. */
+  savedStays: defineTable({
+    guestId: v.id("guests"),
+    slug: v.string(),
+    createdAt: v.number(),
+  }).index("by_guest", ["guestId", "slug"]),
 
   /** Failed admin-login tracking, keyed by a hash of the visitor's IP (never the IP itself). */
   loginAttempts: defineTable({

@@ -61,6 +61,8 @@ export interface InquiryEmail {
   nights: number;
   guests: number;
   total: number | null;
+  /** Set when the guest was signed in to an account. */
+  guest?: { name: string; email: string };
   bookedUrl: string;
   declinedUrl: string;
 }
@@ -75,6 +77,7 @@ export function inquiryEmail(i: InquiryEmail) {
     ["Check-out", longDate(i.end)],
     ["Nights", String(i.nights)],
     ["Guests", String(i.guests)],
+    ...(i.guest ? ([["Signed-in guest", `${i.guest.name} (${i.guest.email})`]] as [string, string][]) : []),
     ...(i.total ? ([["Total shown on the site", `KES ${i.total.toLocaleString("en-KE")}`]] as [string, string][]) : []),
   ];
   const subject = `New booking inquiry: ${i.propertyTitle}, ${longDate(i.start)} to ${longDate(i.end)}`;

@@ -21,6 +21,7 @@ export const create = mutation({
     start: v.string(),
     end: v.string(),
     guests: v.number(),
+    guestId: v.optional(v.id("guests")),
   },
   handler: async (ctx, a) => {
     assertAdmin(a.secret);
@@ -62,6 +63,7 @@ export const create = mutation({
       guests,
       status: "pending",
       createdAt: now,
+      ...(a.guestId && (await ctx.db.get(a.guestId)) ? { guestId: a.guestId } : {}),
     });
     return {
       ok: true as const,

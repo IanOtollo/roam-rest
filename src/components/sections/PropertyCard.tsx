@@ -2,11 +2,11 @@
 
 import { hasRate } from "@/lib/property";
 import Image from "next/image";
-import { Star } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ease, formatKES } from "@/lib/utils";
 import type { Match } from "@/lib/search";
+import { RatingTag } from "@/components/ui/RatingTag";
 
 /** Compact Airbnb-style listing card. Photo, place, a one-line summary and the price. */
 export function PropertyCard({
@@ -46,15 +46,7 @@ export function PropertyCard({
     >
       <Link href={`/stays/${property.slug}?${q.toString()}`} className="group block">
         <div className="relative overflow-hidden rounded-2xl bg-muted">
-          {rated.length > 0 && (
-            <span
-              className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-xs font-medium sm:right-3 sm:top-3 sm:px-2.5 sm:py-1 shadow-sm backdrop-blur-sm"
-              aria-label={`${average.toFixed(1)} out of 5 from ${rated.length} ${rated.length === 1 ? "review" : "reviews"}`}
-            >
-              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" strokeWidth={1.5} />
-              {Number(average.toFixed(1))}
-            </span>
-          )}
+          {rated.length > 0 && <RatingTag value={average} />}
           <Image
             src={property.cover}
             alt={property.title}

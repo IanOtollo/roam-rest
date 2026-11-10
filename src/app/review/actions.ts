@@ -12,7 +12,8 @@ export async function submitReviewAction(_prev: ReviewState, form: FormData): Pr
   if (String(form.get("website") ?? "") !== "") return { done: true };
 
   const token = String(form.get("token") ?? "").slice(0, 200);
-  const author = String(form.get("author") ?? "").slice(0, 100);
+  // The name is optional: a blank one is shown as "Guest".
+  const author = String(form.get("author") ?? "").trim().slice(0, 60) || "Guest";
   const quote = String(form.get("quote") ?? "").slice(0, 1000);
 
   const rating = Number(form.get("rating"));

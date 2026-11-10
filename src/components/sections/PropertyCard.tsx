@@ -52,8 +52,7 @@ export function PropertyCard({
               aria-label={`${average.toFixed(1)} out of 5 from ${rated.length} ${rated.length === 1 ? "review" : "reviews"}`}
             >
               <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" strokeWidth={1.5} />
-              {average.toFixed(1)}
-              <span className="font-normal text-muted-foreground">({rated.length})</span>
+              {Number(average.toFixed(1))}
             </span>
           )}
           <Image

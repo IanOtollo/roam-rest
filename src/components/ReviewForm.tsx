@@ -38,8 +38,8 @@ export function ReviewForm({ token, defaultName }: { token: string; defaultName:
       <input type="hidden" name="token" value={token} />
       {/* Honeypot: invisible to people, tempting to bots. */}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
-      <Field label="Your name" hint="Shown next to your review.">
-        <input name="author" required minLength={2} maxLength={60} defaultValue={defaultName} className={inputCls} />
+      <Field label="Your name (optional)" hint="Shown next to your review. Leave it blank to appear as Guest.">
+        <input name="author" maxLength={60} defaultValue={defaultName} className={inputCls} />
       </Field>
       <Field label="Your rating" hint="Tap a star, 5 is the best.">
         <div className="flex gap-1" onMouseLeave={() => setHover(0)}>

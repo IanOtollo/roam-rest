@@ -20,8 +20,8 @@ export const brand = {
   phone: "0708443090",
   phoneLink: "+254708443090",
   /** Social handles, without the @. */
-  instagram: "triciangugi",
-  tiktok: "patkui",
+  instagram: "roamandreststays",
+  tiktok: "roamnreststays",
   region: "Nairobi, Kenya",
   currency: "KES",
 } as const;

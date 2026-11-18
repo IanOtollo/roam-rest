@@ -2,7 +2,7 @@ import "server-only";
 
 /**
  * Sends mail through Resend's HTTP API (no SDK needed). Needs RESEND_API_KEY.
- * RESEND_FROM must be an address on a domain verified in Resend (e.g. info@roamandrest.co.ke).
+ * RESEND_FROM must be an address on a domain verified in Resend (e.g. sales@roamandrest.co.ke).
  * Until then, Resend only allows "onboarding@resend.dev" and only to the Resend account owner.
  * Never throws: email trouble must never break a guest's booking flow.
  */
@@ -17,7 +17,7 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: process.env.RESEND_FROM || "Roam & Rest <info@roamandrest.co.ke>",
+        from: process.env.RESEND_FROM || "Roam & Rest <sales@roamandrest.co.ke>",
         to: [opts.to],
         subject: opts.subject,
         html: opts.html,
@@ -36,7 +36,7 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
   }
 }
 
-export const notifyAddress = () => process.env.NOTIFY_EMAIL || "info@roamandrest.co.ke";
+export const notifyAddress = () => process.env.NOTIFY_EMAIL || "sales@roamandrest.co.ke";
 
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");

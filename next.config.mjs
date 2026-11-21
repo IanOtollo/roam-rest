@@ -12,6 +12,10 @@ const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
   poweredByHeader: false,
   images: {
+    // Vercel's image optimiser has a monthly quota; once it is used up every new photo answers
+    // "402 Payment Required" and shows as a broken image. Photos are already resized on upload
+    // (and the site's own are small), so they are served as they are instead.
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     // Photos uploaded through the admin live in Convex storage.
     remotePatterns: [

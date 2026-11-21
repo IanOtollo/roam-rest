@@ -217,17 +217,31 @@ export function PropertyForm({
 
   /* ------------------------------------------------------------------- save */
 
+  // Show the problem, then scroll to (and focus) the exact spot that needs attention.
+  function fail(text: string, targetId?: string) {
+    setMessage({ kind: "error", text });
+    if (!targetId) return;
+    requestAnimationFrame(() => {
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: el.matches("input, textarea, select, button") ? "center" : "start" });
+      if (el.matches("input, textarea, select, button")) el.focus({ preventScroll: true });
+    });
+  }
+
   async function save() {
     setMessage(null);
     const title = f.title.trim();
     const slug = (isNew ? f.slug || slugify(title) : f.slug).trim();
-    if (title.length < 2) return setMessage({ kind: "error", text: "Please give the property a name." });
-    if (!f.area.trim() || !f.city.trim()) return setMessage({ kind: "error", text: "Please fill in the area and city." });
-    if (f.walkthrough.length === 0) return setMessage({ kind: "error", text: "Add at least one photo." });
-    for (const u of f.units) {
-      if (!u.label.trim()) return setMessage({ kind: "error", text: "Every way to stay needs a name." });
-      if (u.covers.length === 0) return setMessage({ kind: "error", text: `"${u.label}" must include at least one part of the property.` });
+    if (title.length < 2) return fail("Please give the property a name.", "pf-title");
+    if (!f.area.trim() || !f.city.trim()) return fail("Please fill in the area and city.", f.area.trim() ? "pf-city" : "pf-area");
+    if (f.walkthrough.length === 0) return fail("Add at least one photo.", "pf-photos");
+    for (const [i, u] of f.units.entries()) {
+      if (!u.label.trim()) return fail("Every way to stay needs a name.", `pf-unit-name-${i}`);
     }
+    // An option with no parts ticked means "everything", so a simple property never gets stuck here.
+    const allParts = parts.length > 0 ? parts : ["main"];
+    const units = f.units.map((u) => ({ ...u, covers: u.covers.length > 0 ? u.covers : allParts }));
 
     const first = f.walkthrough[0].src;
     const title0 = (src: string) => f.walkthrough.find((r) => r.src === src)?.title || title;
@@ -242,7 +256,7 @@ export function PropertyForm({
         : { ...a, key: amenityKey(a) },
     );
 
-    if (!slug) return setMessage({ kind: "error", text: "Please give the property a web address." });
+    if (!slug) return fail("Please give the property a web address.", "pf-slug");
 
     setBusy("save");
     // A changed address is renamed first (bookings, reviews and links move with it), then saved.
@@ -250,7 +264,7 @@ export function PropertyForm({
       const renamed = await renamePropertyAction(initial.slug, slug);
       if (!renamed.ok) {
         setBusy(null);
-        return setMessage({ kind: "error", text: renamed.error });
+        return fail(renamed.error, "pf-slug");
       }
     }
     const res = await savePropertyAction({
@@ -265,9 +279,9 @@ export function PropertyForm({
       highlights: highlightsText.split(",").map((s) => s.trim()).filter(Boolean),
       cover: f.cover || first,
       heroImages: { back: hero(f.heroImages.back), main: hero(f.heroImages.main), front: hero(f.heroImages.front) },
-      units: f.units.map((u) => ({ ...u, label: u.label.trim(), tab: u.tab.trim() || u.label.trim(), cover: u.cover || first })),
+      units: units.map((u) => ({ ...u, label: u.label.trim(), tab: u.tab.trim() || u.label.trim(), cover: u.cover || first })),
       amenities,
-      maxGuests: Math.max(...f.units.map((u) => u.maxGuests), f.maxGuests),
+      maxGuests: Math.max(...units.map((u) => u.maxGuests), f.maxGuests),
     });
     setBusy(null);
     if (!res.ok) return setMessage({ kind: "error", text: res.error });
@@ -300,6 +314,7 @@ export function PropertyForm({
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Property name">
             <input
+              id="pf-title"
               className={inputCls}
               value={f.title}
               onChange={(e) => {
@@ -320,6 +335,7 @@ export function PropertyForm({
             }
           >
             <input
+              id="pf-slug"
               className={inputCls}
               value={f.slug}
               onChange={(e) => {
@@ -338,10 +354,10 @@ export function PropertyForm({
             />
           </Field>
           <Field label="Area">
-            <input className={inputCls} value={f.area} onChange={(e) => set("area", e.target.value)} placeholder="Karen, Langata" />
+            <input id="pf-area" className={inputCls} value={f.area} onChange={(e) => set("area", e.target.value)} placeholder="Karen, Langata" />
           </Field>
           <Field label="City">
-            <input className={inputCls} value={f.city} onChange={(e) => set("city", e.target.value)} placeholder="Nairobi" />
+            <input id="pf-city" className={inputCls} value={f.city} onChange={(e) => set("city", e.target.value)} placeholder="Nairobi" />
           </Field>
         </div>
       </Card>
@@ -366,6 +382,7 @@ export function PropertyForm({
         </div>
       </Card>
 
+      <div id="pf-photos" className="scroll-mt-24">
       <Card title="Photos" hint="Add your photos here once. Portrait photos (taller than wide) look best. They're resized automatically.">
         <input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={(e) => addPhotos(e.target.files)} />
         <button type="button" disabled={busy !== null} onClick={() => fileInput.current?.click()} className={btnSecondary}>
@@ -435,6 +452,7 @@ export function PropertyForm({
           </>
         )}
       </Card>
+      </div>
 
       <Card
         title="Ways to stay"
@@ -473,7 +491,7 @@ export function PropertyForm({
               </div>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <Field label="Name">
-                  <input className={inputCls} value={u.label} onChange={(e) => updateUnit(i, { label: e.target.value })} placeholder="The Whole Estate" />
+                  <input id={`pf-unit-name-${i}`} className={inputCls} value={u.label} onChange={(e) => updateUnit(i, { label: e.target.value })} placeholder="The Whole Estate" />
                 </Field>
                 <Field label="Short name" hint="Shown on the small switch, like “Entire”.">
                   <input className={inputCls} value={u.tab} onChange={(e) => updateUnit(i, { tab: e.target.value })} placeholder="Entire" />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useConfirm } from "./ConfirmDialog";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowDown, ArrowUp, Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
@@ -25,6 +26,7 @@ type Item = {
 export function PropertyList({ items }: { items: Item[] }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const { confirm, dialog } = useConfirm();
   const [message, setMessage] = useState<{ kind: "error" | "success"; text: string } | null>(null);
 
   const run = (fn: () => Promise<ActionResult<unknown>>, okText?: string) =>
@@ -61,6 +63,7 @@ export function PropertyList({ items }: { items: Item[] }) {
 
   return (
     <div className="space-y-4">
+      {dialog}
       {message && <Notice kind={message.kind}>{message.text}</Notice>}
       {items.map((p, i) => (
         <div key={p.slug} className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 sm:p-5">
@@ -107,10 +110,13 @@ export function PropertyList({ items }: { items: Item[] }) {
             <button
               type="button"
               disabled={pending}
-              onClick={() => {
-                if (window.confirm(`Delete "${p.title}" for good, with its bookings and reviews? This can't be undone.`)) {
-                  run(() => deletePropertyAction(p.slug), "Deleted.");
-                }
+              onClick={async () => {
+                const ok = await confirm({
+                  title: `Delete "${p.title}" for good?`,
+                  body: "Its bookings and reviews are deleted with it. This can't be undone.",
+                  confirmLabel: "Yes, delete",
+                });
+                if (ok) run(() => deletePropertyAction(p.slug), "Deleted.");
               }}
               className={btnSmall}
               aria-label={`Delete ${p.title}`}

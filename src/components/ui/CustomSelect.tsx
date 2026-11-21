@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Search } from "lucide-react";
 import { cn, ease } from "@/lib/utils";
 
 export type SelectOption = {
@@ -29,6 +29,7 @@ export function CustomSelect({
   disabled = false,
   ariaLabel,
   className,
+  searchable = false,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -37,14 +38,20 @@ export function CustomSelect({
   disabled?: boolean;
   ariaLabel?: string;
   className?: string;
+  /** Adds a search box at the top of the menu that filters options as you type. */
+  searchable?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const searchInput = useRef<HTMLInputElement>(null);
   const [up, setUp] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const items = useRef<(HTMLButtonElement | null)[]>([]);
   const listId = useId();
   const current = options.find((o) => o.value === value);
+  const q = query.trim().toLowerCase();
+  const shown = searchable && q ? options.filter((o) => `${o.label} ${o.hint ?? ""}`.toLowerCase().includes(q)) : options;
 
   // Close on outside click.
   useEffect(() => {
@@ -65,21 +72,29 @@ export function CustomSelect({
       setUp(window.innerHeight - r.bottom < wanted && r.top > window.innerHeight - r.bottom);
     }
     const i = Math.max(0, options.findIndex((o) => o.value === value));
-    requestAnimationFrame(() => items.current[i]?.focus());
-  }, [open, options, value]);
+    requestAnimationFrame(() => (searchable ? searchInput.current : items.current[i])?.focus());
+  }, [open, options, value, searchable]);
 
   const close = (returnFocus = true) => {
     setOpen(false);
+    setQuery("");
     if (returnFocus) trigger.current?.focus();
   };
-  const focusItem = (i: number) => items.current[(i + options.length) % options.length]?.focus();
+  const focusItem = (i: number) => {
+    if (shown.length === 0) return;
+    items.current[(i + shown.length) % shown.length]?.focus();
+  };
 
   function onListKey(e: React.KeyboardEvent) {
     const i = items.current.findIndex((el) => el === document.activeElement);
     if (e.key === "ArrowDown") (e.preventDefault(), focusItem(i + 1));
     else if (e.key === "ArrowUp") (e.preventDefault(), focusItem(i - 1));
-    else if (e.key === "Home") (e.preventDefault(), focusItem(0));
-    else if (e.key === "End") (e.preventDefault(), focusItem(options.length - 1));
+    else if (e.key === "Home" && e.target !== searchInput.current) (e.preventDefault(), focusItem(0));
+    else if (e.key === "End" && e.target !== searchInput.current) (e.preventDefault(), focusItem(shown.length - 1));
+    else if (e.key === "Enter" && e.target === searchInput.current) {
+      e.preventDefault();
+      if (shown[0]) (onChange(shown[0].value), close());
+    }
     else if (e.key === "Escape") (e.preventDefault(), close());
     else if (e.key === "Tab") close(false);
   }
@@ -133,8 +148,25 @@ export function CustomSelect({
               up ? "bottom-full mb-2 origin-bottom" : "top-full mt-2 origin-top",
             )}
           >
+            {searchable && (
+              <li role="presentation" className="sticky top-0 z-10 -mx-1.5 -mt-1.5 mb-1 bg-card px-1.5 pb-1.5 pt-1.5">
+                <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 focus-within:border-primary">
+                  <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  <input
+                    ref={searchInput}
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search…"
+                    aria-label="Search options"
+                    className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground/60"
+                  />
+                </div>
+              </li>
+            )}
             {options.length === 0 && <li className="px-3 py-3 text-sm text-muted-foreground">Nothing to choose yet.</li>}
-            {options.map((o, i) => {
+            {options.length > 0 && shown.length === 0 && <li className="px-3 py-3 text-sm text-muted-foreground">No matches.</li>}
+            {shown.map((o, i) => {
               const selected = o.value === value;
               return (
                 <li key={o.value} role="presentation">

@@ -1,14 +1,17 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Ban, Trash2 } from "lucide-react";
 import { cancelBookingAction, createBookingAction, deleteBookingAction, type ActionResult } from "@/app/admin/actions";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppButton";
+import { addDays } from "@/lib/availability";
+import { useConfirm } from "./ConfirmDialog";
+import { AvailabilityCalendar, type Occupied } from "./AvailabilityCalendar";
 import { btnPrimary, btnSmall, Card, Field, formatDay, inputCls, nightsBetween, Notice } from "./ui";
 
-type PropertyLite = { slug: string; title: string; units: { id: string; label: string }[] };
+type PropertyLite = { slug: string; title: string; units: { id: string; label: string; covers: string[] }[] };
 type BookingRow = {
   _id: string;
   propertySlug: string;
@@ -43,10 +46,31 @@ export function BookingsManager({ properties, bookings }: { properties: Property
   const [showPast, setShowPast] = useState(false);
 
   const today = new Date().toISOString().slice(0, 10);
-  const mine = useMemo(() => bookings.filter((b) => b.propertySlug === slug), [bookings, slug]);
+  const mine = bookings;
   const upcoming = mine.filter((b) => b.status === "confirmed" && b.end >= today).sort((a, b) => (a.start < b.start ? -1 : 1));
   const past = mine.filter((b) => !(b.status === "confirmed" && b.end >= today)).sort((a, b) => (a.start < b.start ? 1 : -1));
-  const unitLabel = (id: string) => property?.units.find((u) => u.id === id)?.label ?? id;
+  // The confirmed booking (if any) holding a night: same property and an overlapping part.
+  const occupiedBy = (night: string): Occupied | undefined => {
+    const mine = property?.units.find((u) => u.id === unit)?.covers ?? [unit];
+    const b = bookings.find((x) => {
+      if (x.propertySlug !== slug || x.status !== "confirmed" || !(night >= x.start && night < x.end)) return false;
+      const other = property?.units.find((u) => u.id === x.unit)?.covers ?? [x.unit];
+      return other.some((c) => mine.includes(c));
+    });
+    return b && { id: b._id, start: b.start, end: b.end, label: b.guestName || b.note || "Blocked" };
+  };
+
+  // Distinct upcoming bookings that block the calendar for this property and option.
+  const taken: Occupied[] = [];
+  for (let d = today; d < addDays(today, 540); d = addDays(d, 1)) {
+    const o = occupiedBy(d);
+    if (o && !taken.some((t) => t.id === o.id)) taken.push(o);
+  }
+
+  const unitLabel = (b: BookingRow) => {
+    const p = properties.find((x) => x.slug === b.propertySlug);
+    return `${p?.title ?? b.propertySlug} · ${p?.units.find((u) => u.id === b.unit)?.label ?? b.unit}`;
+  };
 
   const run = (fn: () => Promise<ActionResult<unknown>>, okText?: string, after?: () => void) =>
     start(async () => {
@@ -74,9 +98,12 @@ export function BookingsManager({ properties, bookings }: { properties: Property
             <Field label="Property">
               <CustomSelect
                 value={slug}
+                searchable
                 onChange={(v) => {
                   setSlug(v);
                   setUnit(properties.find((p) => p.slug === v)?.units[0]?.id ?? "");
+                  setFrom("");
+                  setTo("");
                 }}
                 options={properties.map((p) => ({ value: p.slug, label: p.title }))}
               />
@@ -85,15 +112,35 @@ export function BookingsManager({ properties, bookings }: { properties: Property
           <Field label="What's booked">
             <CustomSelect
               value={unit}
-              onChange={setUnit}
+              onChange={(v) => {
+                setUnit(v);
+                setFrom("");
+                setTo("");
+              }}
               options={property.units.map((u) => ({ value: u.id, label: u.label }))}
             />
           </Field>
-          <Field label="Check-in">
-            <input type="date" className={inputCls} value={from} min={today} onChange={(e) => setFrom(e.target.value)} />
-          </Field>
-          <Field label="Check-out" hint="The morning they leave.">
-            <input type="date" className={inputCls} value={to} min={from || today} onChange={(e) => setTo(e.target.value)} />
+          <Field label="Dates" className="sm:col-span-2">
+            <AvailabilityCalendar
+              start={from}
+              end={to}
+              occupiedBy={occupiedBy}
+              onChange={(a, b) => {
+                setFrom(a);
+                setTo(b);
+              }}
+            />
+            {taken.length > 0 && (
+              <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
+                <li className="text-xs uppercase tracking-wide">Already booked here</li>
+                {taken.map((t) => (
+                  <li key={t.id} className="flex items-center gap-2">
+                    <span className="h-3 w-5 shrink-0 rounded-md bg-accent/30" />
+                    {formatDay(t.start)} to {formatDay(t.end)} · {t.label}
+                  </li>
+                ))}
+              </ul>
+            )}
           </Field>
           <Field label="Guest name (optional)">
             <input className={inputCls} value={guestName} onChange={(e) => setGuestName(e.target.value)} />
@@ -132,11 +179,11 @@ export function BookingsManager({ properties, bookings }: { properties: Property
 
       <Card title="Upcoming and current">
         {upcoming.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nothing booked yet for {property.title}.</p>
+          <p className="text-sm text-muted-foreground">No upcoming bookings yet.</p>
         ) : (
           <ul className="divide-y divide-border">
             {upcoming.map((b) => (
-              <Row key={b._id} b={b} unitLabel={unitLabel(b.unit)} pending={pending} run={run} />
+              <Row key={b._id} b={b} unitLabel={unitLabel(b)} pending={pending} run={run} />
             ))}
           </ul>
         )}
@@ -151,7 +198,7 @@ export function BookingsManager({ properties, bookings }: { properties: Property
             <Card className="mt-4">
               <ul className="divide-y divide-border">
                 {past.map((b) => (
-                  <Row key={b._id} b={b} unitLabel={unitLabel(b.unit)} pending={pending} run={run} />
+                  <Row key={b._id} b={b} unitLabel={unitLabel(b)} pending={pending} run={run} />
                 ))}
               </ul>
             </Card>
@@ -173,12 +220,14 @@ function Row({
   pending: boolean;
   run: (fn: () => Promise<ActionResult<unknown>>, okText?: string) => void;
 }) {
+  const { confirm, dialog } = useConfirm();
   return (
     <li className="flex flex-wrap items-start justify-between gap-3 py-4 text-sm">
+      {dialog}
       <div className="space-y-0.5">
         <p>
           <span className="font-medium">{formatDay(b.start)}</span> to {formatDay(b.end)}
-          <span className="text-muted-foreground"> · {nightsBetween(b.start, b.end)} nights</span>
+          <span className="text-muted-foreground"> · {nightsBetween(b.start, b.end)} {nightsBetween(b.start, b.end) === 1 ? "night" : "nights"}</span>
           {b.status === "cancelled" && <span className="ml-2 rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">Cancelled</span>}
         </p>
         <p className="text-muted-foreground">
@@ -204,7 +253,10 @@ function Row({
             type="button"
             disabled={pending}
             className={btnSmall}
-            onClick={() => window.confirm("Cancel this booking? The dates will be free again.") && run(() => cancelBookingAction(b._id), "Cancelled. The dates are free again.")}
+            onClick={async () =>
+              (await confirm({ title: "Cancel this booking?", body: "The dates will be free again on the website.", confirmLabel: "Yes, cancel it" })) &&
+              run(() => cancelBookingAction(b._id), "Cancelled. The dates are free again.")
+            }
           >
             <Ban className="h-3.5 w-3.5" /> Cancel
           </button>
@@ -214,7 +266,10 @@ function Row({
           disabled={pending}
           aria-label="Delete booking"
           className={btnSmall}
-          onClick={() => window.confirm("Delete this record for good?") && run(() => deleteBookingAction(b._id), "Deleted.")}
+          onClick={async () =>
+            (await confirm({ title: "Delete this booking for good?", body: "This removes the record completely and can't be undone.", confirmLabel: "Yes, delete" })) &&
+            run(() => deleteBookingAction(b._id), "Deleted.")
+          }
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>

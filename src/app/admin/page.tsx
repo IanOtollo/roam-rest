@@ -84,7 +84,7 @@ export default async function AdminHome() {
               <li key={b._id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
                 <span>
                   <span className="font-medium">{formatDay(b.start)}</span> to {formatDay(b.end)}
-                  <span className="text-muted-foreground"> · {nightsBetween(b.start, b.end)} nights</span>
+                  <span className="text-muted-foreground"> · {nightsBetween(b.start, b.end)} {nightsBetween(b.start, b.end) === 1 ? "night" : "nights"}</span>
                 </span>
                 <span className="text-muted-foreground">
                   {titleOf(b.propertySlug)}

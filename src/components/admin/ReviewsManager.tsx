@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useConfirm } from "./ConfirmDialog";
 import { useRouter } from "next/navigation";
 import { Check, Copy, EyeOff, Trash2 } from "lucide-react";
 import {
@@ -235,8 +236,10 @@ function ReviewItem({
   pending: boolean;
   run: (fn: () => Promise<ActionResult<unknown>>) => void;
 }) {
+  const { confirm, dialog } = useConfirm();
   return (
     <li className="rounded-2xl border border-border/60 p-4">
+      {dialog}
       <p className="font-serif text-lg leading-snug tracking-tight">&ldquo;{r.quote}&rdquo;</p>
       {r.rating ? <Stars value={r.rating} className="mb-2" /> : null}
       <p className="mt-3 text-sm">{r.author}</p>
@@ -259,7 +262,10 @@ function ReviewItem({
           disabled={pending}
           aria-label="Delete review"
           className={btnSmall}
-          onClick={() => window.confirm("Delete this review for good?") && run(() => deleteReviewAction(r._id))}
+          onClick={async () =>
+            (await confirm({ title: "Delete this review for good?", body: "This can't be undone.", confirmLabel: "Yes, delete" })) &&
+            run(() => deleteReviewAction(r._id))
+          }
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>

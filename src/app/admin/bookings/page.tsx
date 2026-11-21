@@ -15,7 +15,7 @@ export default async function BookingsPage() {
     <>
       <PageTitle title="Bookings" hint="Record confirmed stays and closed dates. The calendar and search on the website update straight away." />
       <BookingsManager
-        properties={properties.map((p) => ({ slug: p.slug, title: p.title, units: p.units.map((u) => ({ id: u.id, label: u.label })) }))}
+        properties={properties.map((p) => ({ slug: p.slug, title: p.title, units: p.units.map((u) => ({ id: u.id, label: u.label, covers: u.covers })) }))}
         bookings={bookings.map((b) => ({
           _id: b._id,
           propertySlug: b.propertySlug,
